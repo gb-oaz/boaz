@@ -573,11 +573,11 @@ add_backend() {
 
   local LANGS=(
     "Java" "Kotlin" "Python" "Go" "Node.js"
-    "Rust" "Ruby" "PHP" "C#/.NET" "Scala" "Elixir"
+    "Rust" "Ruby" "PHP" "C#" "Scala" "Elixir"
   )
   local lang_folders=(
     "java" "kotlin" "python" "go" "nodejs"
-    "rust" "ruby" "php" "dotnet" "scala" "elixir"
+    "rust" "ruby" "php" "csharp" "scala" "elixir"
   )
 
   local lang_choice
