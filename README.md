@@ -24,9 +24,9 @@ A cada execução ele verifica o que já existe e oferece apenas o que faz senti
 
 ## Como usar
 
-Você pode usar o `boaz` de duas formas.
+Você pode usar o `boaz` da seguinte forma
 
-### Forma 1 — Baixar e manter no projeto
+### Baixar e manter no projeto
 
 Ideal quando você quer versionar o script junto com o monorepo e rodá-lo sempre que precisar adicionar algo.
 
@@ -41,16 +41,6 @@ O arquivo `boaz.sh` fica na raiz do seu projeto. Nas próximas vezes, basta roda
 ```bash
 ./boaz.sh
 ```
-
-### Forma 2 — Executar direto sem baixar
-
-Ideal para a primeira configuração, quando você só quer rodar uma vez para montar a estrutura base.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/gb-oaz/boaz/main/boaz.sh | bash
-```
-
-> ⚠️ Nessa forma o script roda e some — ele não fica salvo no projeto. Use a **Forma 1** se quiser continuar gerenciando a estrutura depois.
 
 ---
 
