@@ -7,6 +7,8 @@
 set -euo pipefail
 
 CONFIG_FILE=".boaz"
+ICONS_DIR="0_Assets/diagramas/icones"
+ICONS_TARBALL="https://codeload.github.com/gb-oaz/boaz/tar.gz/refs/heads/main"
 DIAGRAM_DIRS="2_Diagramas 3_Arquitetura"
 LEAF_DIRS="0_Assets/projeto 0_Assets/diagramas 1_Requisitos 2_Diagramas 3_Arquitetura 4_CI_CD
            5_DEV/backend 5_DEV/frontend 5_DEV/qa/backend 5_DEV/qa/frontend"
@@ -107,6 +109,7 @@ cmd_init() {
   create_readmes
   create_requirements_template
   create_diagram_theme
+  install_icons
   create_diagram_skills
 
   # Mantém no git as pastas que ainda estão vazias
@@ -153,8 +156,9 @@ Recursos reutilizáveis do projeto e dos diagramas.
 
 - Prefira `.svg`; raster (`.png`, `.jpg`, `.webp`) só quando não houver vetor.
 - Nomes em kebab-case, sem acentos: `funcao-serverless.svg`, `logo-principal.svg`.
-- Ícones de cloud neutros (categoria do serviço), não de um único provedor —
-  a arquitetura deve valer para Azure, AWS e GCP.
+- `diagramas/icones/` traz os ícones oficiais de AWS e GCP (instalados pelo
+  `./boaz.sh init`, veja o README da pasta). Use-os só quando a arquitetura for
+  de um provedor específico; por padrão ela é neutra e vale para Azure, AWS e GCP.
 - As skills de diagrama procuram aqui antes de desenhar e **embutem** o asset no SVG
   gerado (o diagrama continua autocontido e renderiza em qualquer lugar).
 - `diagramas/tema.svg` define o visual de todos os diagramas: edite-o para mudar
@@ -443,6 +447,59 @@ create_diagram_theme() {
 EOF
 }
 
+# ── ÍCONES DE CLOUD ──────────────────────────────────────────
+# Copia assets/icones/ do boaz para 0_Assets/diagramas/icones/, sem sobrescrever.
+# Usa a cópia local (clone do boaz) se existir; senão baixa do GitHub.
+install_icons() {
+  local src tmp="" f n=0
+  src="$(cd "$(dirname "$0")" && pwd)/assets/icones"
+  if [ ! -d "$src" ]; then
+    tmp=$(mktemp -d)
+    if command -v curl &>/dev/null; then
+      curl -fsSL "$ICONS_TARBALL" | tar -xzf - -C "$tmp" boaz-main/assets/icones 2>/dev/null || true
+    elif command -v wget &>/dev/null; then
+      wget -qO- "$ICONS_TARBALL" | tar -xzf - -C "$tmp" boaz-main/assets/icones 2>/dev/null || true
+    fi
+    src="$tmp/boaz-main/assets/icones"
+  fi
+  if [ ! -d "$src" ]; then
+    warn "Ícones de cloud não baixados (sem rede?) — rode ./boaz.sh init de novo depois."
+    [ -z "$tmp" ] || rm -rf "$tmp"
+    return
+  fi
+  while IFS= read -r f; do
+    [ -e "$ICONS_DIR/$f" ] && continue
+    mkdir -p "$(dirname "$ICONS_DIR/$f")"
+    cp "$src/$f" "$ICONS_DIR/$f"
+    n=$((n + 1))
+  done < <(cd "$src" && find . -type f -name '*.svg' | sed 's|^\./||')
+  [ -z "$tmp" ] || rm -rf "$tmp"
+  [ "$n" -eq 0 ] || success "Ícones de cloud: ${n} novos em ${D}${ICONS_DIR}/${NC}"
+
+  write_always "$ICONS_DIR/README.md" << 'EOF'
+# Ícones de cloud
+
+Gerenciado pelo `./boaz.sh init` (copia só o que falta; ícones que você adicionar aqui são mantidos).
+Todos em `.svg`, nomes em kebab-case.
+
+```
+icones/
+├── aws/                       # AWS Architecture Icons (pacote oficial 07/2025)
+│   ├── servicos/<categoria>/  # um por serviço (64px) — amazon-ec2.svg, aws-lambda.svg
+│   ├── recursos/<categoria>/  # recursos de um serviço (48px) — amazon-s3-bucket.svg
+│   ├── grupos/                # fronteiras: region, aws-cloud, virtual-private-cloud-vpc, subnets
+│   └── categorias/            # ícone por categoria — compute.svg, database.svg
+└── gcp/                       # Google Cloud icons
+    ├── produtos/              # ícones atuais dos produtos principais — bigquery.svg, gke.svg
+    ├── categorias/            # ícone por categoria — compute.svg, databases.svg
+    └── legado/                # conjunto completo antigo — cloud-functions.svg, pubsub.svg
+```
+
+Procure por nome em vez de listar tudo: `find 0_Assets/diagramas/icones -iname '*lambda*'`.
+Para Azure, adicione os ícones em `azure/` seguindo o mesmo padrão.
+EOF
+}
+
 # ── SKILLS DE DIAGRAMA ───────────────────────────────────────
 # Regras comuns às duas skills; __PASTA__ é substituído pela pasta de saída
 diagram_skill_common() {
@@ -480,7 +537,8 @@ Se o `boaz.sh` não estiver disponível, calcule pela regra acima.
 
 ## Assets (`0_Assets/`)
 
-Antes de desenhar, rode `ls -R 0_Assets` e reaproveite o que existir: ícones de cloud e tecnologias, logos de integrações e da marca.
+Antes de desenhar, rode `ls 0_Assets/projeto 0_Assets/diagramas` e reaproveite o que existir: ícones de tecnologias, logos de integrações e da marca.
+Ícones de cloud ficam em `0_Assets/diagramas/icones/{aws,gcp}/` (centenas de arquivos — leia o `README.md` da pasta e busque por nome: `find 0_Assets/diagramas/icones -iname '*lambda*'`, nunca `ls -R`).
 
 - **Embuta sempre** — nunca referencie o arquivo por caminho (`href="../0_Assets/..."` quebra no GitHub e em visualizadores de imagem).
   - `.svg`: copie o conteúdo gráfico para um `<symbol id="asset-<nome>" viewBox="...">` em `<defs>` (com o `viewBox` do original) e desenhe com `<use href="#asset-<nome>" x=".." y=".." width=".." height=".."/>`. Remova `<script>`, `<foreignObject>`, handlers `on*` e metadados de editor; prefixe ids internos com `<nome>-` para não colidirem.
@@ -663,7 +721,7 @@ Se o termo não estiver na tabela, crie um equivalente neutro no mesmo estilo (c
 - **Componentes (nível de serviço)**: cada serviço ou sistema em retângulo com `«component»` (ou `«system»`) e o ícone de componente no canto; interface fornecida = pirulito (linha + círculo `ink-ring`) rotulada com o contrato (`REST /pedidos`, `tópico pedido.criado`); requerida = soquete (meio-círculo). Conecte soquete ao pirulito.
 - **Implantação UML**: nós como caixas 3D (retângulo com face superior e lateral em paralelogramos, `node`) com `«device»` ou `«executionEnvironment»` e o nome (`Cluster Kubernetes gerenciado`, `Máquina virtual`, `Navegador`); nós podem conter nós. Artefatos dentro dos nós como retângulos com `«artifact»` e nome do arquivo/imagem (`api:1.4.2` em `mono`). Caminhos de comunicação como linhas entre nós rotuladas com protocolo; dependência artefato→componente com `edge-async` + `seta-aberta` `«manifest»`.
 - Cada caixa: nome em negrito, tecnologia entre colchetes (`[PostgreSQL 16]`, `[Função serverless]`) e uma linha de responsabilidade.
-- Ícones de provedores/tecnologias vêm de `0_Assets/diagramas/` (embutidos, ver **Assets**). Sem ícone, use formas simples — pessoa para ator, cilindro para banco, retângulo para serviço, retângulo com borda dupla para fila/mensageria.
+- Ícones de tecnologias vêm de `0_Assets/diagramas/` (embutidos, ver **Assets**). Ícones de provedor (`icones/aws/`, `icones/gcp/`) só quando o pedido fixar o provedor — no diagrama neutro, nada de logo de produto. Com provedor fixado, use `icones/aws/grupos/` para as fronteiras (região, VPC, sub-redes). Sem ícone, use formas simples — pessoa para ator, cilindro para banco, retângulo para serviço, retângulo com borda dupla para fila/mensageria.
 - Fronteiras (conta/assinatura/projeto, região, rede privada, cluster, ambiente) como retângulos tracejados rotulados no canto superior esquerdo.
 - Setas rotuladas com o que trafega e o protocolo (`pedidos · HTTPS/JSON`, `eventos · AMQP`).
 - Sistemas externos com `node-external`, para separar do que é do projeto.

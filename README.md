@@ -47,7 +47,8 @@ O nome fica salvo em `.boaz`. Rodar `./boaz.sh init` de novo só cria o que esti
 projeto/
 ├── 0_Assets/
 │   ├── projeto/         # Marca, logos, imagens, fontes
-│   └── diagramas/       # tema.svg (estilo padrão), ícones de cloud/tecnologias
+│   └── diagramas/       # tema.svg (estilo padrão), ícones de tecnologias
+│       └── icones/      # ícones oficiais AWS e GCP (.svg), instalados pelo init
 ├── 1_Requisitos/        # O produto desejado (.md) — sem backend, frontend ou tecnologia
 ├── 2_Diagramas/         # Diagramas de desenvolvimento, backend e frontend (.svg)
 ├── 3_Arquitetura/       # Alto nível: cloud, tecnologias, integrações (.svg)
@@ -112,7 +113,8 @@ As skills conhecem os 14 diagramas da UML 2.5 e escolhem o tipo pela pergunta, q
 ### Visual e assets
 
 - Todos os diagramas usam o mesmo **tema dark** definido em `0_Assets/diagramas/tema.svg` — abra o arquivo para ver a referência. As skills copiam o `<style>` e os `<defs>` dele e estilizam só por classes CSS; edite o tema para mudar o visual dos próximos diagramas.
-- Coloque em `0_Assets/diagramas/` ícones de cloud, tecnologias e logos de integrações (de preferência `.svg`). Os diagramas de arquitetura são **neutros de provedor** (valem para Azure, AWS e GCP): usam categorias como *função serverless* ou *armazenamento de objetos*, nunca nomes de produto de um só provedor. As skills procuram ali antes de desenhar e **embutem** o asset no SVG, que continua autocontido e renderiza no GitHub.
+- O `init` instala em `0_Assets/diagramas/icones/` os ícones oficiais de **AWS** (pacote de 07/2025: serviços, recursos, grupos e categorias) e **GCP** (produtos, categorias e o conjunto legado) — ~1.100 `.svg` versionados em [`assets/icones/`](assets/icones). Só copia o que falta, então ícones seus nunca são sobrescritos. Sem rede, o init avisa e segue; rode de novo depois.
+- Coloque em `0_Assets/diagramas/` outros ícones de tecnologias e logos de integrações (de preferência `.svg`). Os diagramas de arquitetura são **neutros de provedor** (valem para Azure, AWS e GCP): usam categorias como *função serverless* ou *armazenamento de objetos*, nunca nomes de produto de um só provedor — os ícones de AWS/GCP só entram quando o pedido fixa o provedor. As skills procuram ali antes de desenhar e **embutem** o asset no SVG, que continua autocontido e renderiza no GitHub.
 - Antes de entregar, a skill valida o XML e, se houver `rsvg-convert`/`qlmanage`, renderiza uma prévia para corrigir sobreposições e desalinhamentos.
 
 ---
