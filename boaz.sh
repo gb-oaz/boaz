@@ -156,7 +156,7 @@ Recursos reutilizáveis do projeto e dos diagramas.
 
 - Prefira `.svg`; raster (`.png`, `.jpg`, `.webp`) só quando não houver vetor.
 - Nomes em kebab-case, sem acentos: `funcao-serverless.svg`, `logo-principal.svg`.
-- `diagramas/icones/` traz os ícones oficiais de AWS e GCP (instalados pelo
+- `diagramas/icones/` traz os ícones oficiais de AWS, GCP e Azure (instalados pelo
   `./boaz.sh init`, veja o README da pasta). Use-os só quando a arquitetura for
   de um provedor específico; por padrão ela é neutra e vale para Azure, AWS e GCP.
 - As skills de diagrama procuram aqui antes de desenhar e **embutem** o asset no SVG
@@ -493,10 +493,11 @@ icones/
     ├── produtos/              # ícones atuais dos produtos principais — bigquery.svg, gke.svg
     ├── categorias/            # ícone por categoria — compute.svg, databases.svg
     └── legado/                # conjunto completo antigo — cloud-functions.svg, pubsub.svg
+└── azure/                     # Azure Public Service Icons (V24)
+    └── <categoria>/           # compute/, databases/, networking/, general/… — virtual-machine.svg, kubernetes-services.svg
 ```
 
 Procure por nome em vez de listar tudo: `find 0_Assets/diagramas/icones -iname '*lambda*'`.
-Para Azure, adicione os ícones em `azure/` seguindo o mesmo padrão.
 EOF
 }
 
@@ -538,7 +539,7 @@ Se o `boaz.sh` não estiver disponível, calcule pela regra acima.
 ## Assets (`0_Assets/`)
 
 Antes de desenhar, rode `ls 0_Assets/projeto 0_Assets/diagramas` e reaproveite o que existir: ícones de tecnologias, logos de integrações e da marca.
-Ícones de cloud ficam em `0_Assets/diagramas/icones/{aws,gcp}/` (centenas de arquivos — leia o `README.md` da pasta e busque por nome: `find 0_Assets/diagramas/icones -iname '*lambda*'`, nunca `ls -R`).
+Ícones de cloud ficam em `0_Assets/diagramas/icones/{aws,gcp,azure}/` (centenas de arquivos — leia o `README.md` da pasta e busque por nome: `find 0_Assets/diagramas/icones -iname '*lambda*'`, nunca `ls -R`).
 
 - **Embuta sempre** — nunca referencie o arquivo por caminho (`href="../0_Assets/..."` quebra no GitHub e em visualizadores de imagem).
   - `.svg`: copie o conteúdo gráfico para um `<symbol id="asset-<nome>" viewBox="...">` em `<defs>` (com o `viewBox` do original) e desenhe com `<use href="#asset-<nome>" x=".." y=".." width=".." height=".."/>`. Remova `<script>`, `<foreignObject>`, handlers `on*` e metadados de editor; prefixe ids internos com `<nome>-` para não colidirem.
@@ -721,7 +722,7 @@ Se o termo não estiver na tabela, crie um equivalente neutro no mesmo estilo (c
 - **Componentes (nível de serviço)**: cada serviço ou sistema em retângulo com `«component»` (ou `«system»`) e o ícone de componente no canto; interface fornecida = pirulito (linha + círculo `ink-ring`) rotulada com o contrato (`REST /pedidos`, `tópico pedido.criado`); requerida = soquete (meio-círculo). Conecte soquete ao pirulito.
 - **Implantação UML**: nós como caixas 3D (retângulo com face superior e lateral em paralelogramos, `node`) com `«device»` ou `«executionEnvironment»` e o nome (`Cluster Kubernetes gerenciado`, `Máquina virtual`, `Navegador`); nós podem conter nós. Artefatos dentro dos nós como retângulos com `«artifact»` e nome do arquivo/imagem (`api:1.4.2` em `mono`). Caminhos de comunicação como linhas entre nós rotuladas com protocolo; dependência artefato→componente com `edge-async` + `seta-aberta` `«manifest»`.
 - Cada caixa: nome em negrito, tecnologia entre colchetes (`[PostgreSQL 16]`, `[Função serverless]`) e uma linha de responsabilidade.
-- Ícones de tecnologias vêm de `0_Assets/diagramas/` (embutidos, ver **Assets**). Ícones de provedor (`icones/aws/`, `icones/gcp/`) só quando o pedido fixar o provedor — no diagrama neutro, nada de logo de produto. Com provedor fixado, use `icones/aws/grupos/` para as fronteiras (região, VPC, sub-redes). Sem ícone, use formas simples — pessoa para ator, cilindro para banco, retângulo para serviço, retângulo com borda dupla para fila/mensageria.
+- Ícones de tecnologias vêm de `0_Assets/diagramas/` (embutidos, ver **Assets**). Ícones de provedor (`icones/aws/`, `icones/gcp/`, `icones/azure/`) só quando o pedido fixar o provedor — no diagrama neutro, nada de logo de produto. Com provedor fixado, use `icones/aws/grupos/` para as fronteiras (região, VPC, sub-redes). Sem ícone, use formas simples — pessoa para ator, cilindro para banco, retângulo para serviço, retângulo com borda dupla para fila/mensageria.
 - Fronteiras (conta/assinatura/projeto, região, rede privada, cluster, ambiente) como retângulos tracejados rotulados no canto superior esquerdo.
 - Setas rotuladas com o que trafega e o protocolo (`pedidos · HTTPS/JSON`, `eventos · AMQP`).
 - Sistemas externos com `node-external`, para separar do que é do projeto.
