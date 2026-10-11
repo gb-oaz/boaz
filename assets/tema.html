@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tema dos documentos de requisito · boaz · v01</title>
+<title>Tema dos documentos de requisito · boaz · v02</title>
 <!-- boaz:marca — metadados lidos pelo ./boaz.sh (um por linha, nesta ordem) -->
 <meta name="boaz:projeto" content="boaz">
 <meta name="boaz:documento" content="tema">
 <meta name="boaz:caminho" content="0_Assets/requisitos/tema.html">
 <meta name="boaz:tipo" content="Tema">
-<meta name="boaz:versao" content="v01">
-<meta name="boaz:data" content="2026-10-11 15:00">
+<meta name="boaz:versao" content="v02">
+<meta name="boaz:data" content="2026-10-11 16:00">
 <meta name="boaz:status" content="Aprovado">
 <!-- boaz:casca:inicio — copie este bloco sem alterar para o <head> de todo documento -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..800;1,14..32,400..800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap">
 <style id="boaz-tema">
 /* ════════════════════════════════════════════════════════════
-   boaz · tema dos documentos de requisito · v01
+   boaz · tema dos documentos de requisito · v02
    Paleta do tema.svg (dark) com a variante light equivalente.
    Temas: claro · sistema · escuro (botões no canto) · impressão sempre clara.
    ════════════════════════════════════════════════════════════ */
@@ -123,7 +123,6 @@ body {
   font-optical-sizing: auto;
   border-radius: 14px;
   box-shadow: var(--shadow);
-  overflow: clip;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -168,9 +167,10 @@ code {
   border-radius: 6px;
   background: var(--surface-2);
   color: var(--text-strong);
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 code.id {
+  white-space: nowrap;
   background: var(--accent-soft);
   color: var(--accent-ink);
   font-weight: 600;
@@ -197,6 +197,7 @@ q.ui { quotes: "“" "”"; font-family: var(--mono); font-size: .9em; color: va
 .boaz-marca-topo {
   position: relative;
   padding: 44px 56px 0;
+  border-radius: 14px 14px 0 0;
   background: var(--band);
   border-bottom: 1px solid var(--border-soft);
 }
@@ -291,10 +292,12 @@ q.ui { quotes: "“" "”"; font-family: var(--mono); font-size: .9em; color: va
 /* ── marca d'água · rodapé ───────────────────────────────── */
 .boaz-marca-rodape {
   padding: 32px 56px 28px;
+  border-radius: 0 0 14px 14px;
   background: var(--band);
   border-top: 1px solid var(--border-soft);
 }
 .boaz-marca-rodape table { margin-bottom: 20px; font-size: 13px; }
+.boaz-marca-rodape .boaz-tabela { margin-bottom: 20px; }
 .boaz-marca-rodape td:nth-child(2) { color: var(--muted); font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
 .boaz-rodape-linha {
   display: flex;
@@ -368,6 +371,8 @@ tr:last-child > td { border-bottom: 0; }
 tbody tr:target > td { background: var(--accent-soft); }
 td:has(> code.id:only-child), td:has(> .prio:only-child), td:has(> .tag:only-child) { width: 1%; white-space: nowrap; }
 td code:not(.id) { white-space: normal; }
+.boaz-tabela { margin: 0 0 20px; overflow-x: auto; overscroll-behavior-x: contain; }
+.boaz-tabela > table { margin: 0; }
 caption { caption-side: top; padding: 0 0 8px; color: var(--muted); font-size: 13px; text-align: left; }
 
 /* prioridade MoSCoW */
@@ -551,7 +556,7 @@ a.ref code.id { margin-left: 2px; }
 /* ── glossário ───────────────────────────────────────────── */
 dl.glossario {
   display: grid;
-  grid-template-columns: minmax(140px, 220px) 1fr;
+  grid-template-columns: minmax(140px, 220px) minmax(0, 1fr);
   margin: 0 0 20px;
   border: 1px solid var(--border-soft);
   border-radius: 10px;
@@ -608,8 +613,7 @@ dl.glossario > :nth-last-child(-n + 2) { border-bottom: 0; }
   .boaz-carimbo > div:nth-child(-n + 2) { border-top: 0; }
   .boaz-marca-rodape { padding: 24px 16px; }
   .sumario ol { columns: 1; }
-  table { display: block; overflow-x: auto; }
-  dl.glossario { grid-template-columns: 1fr; }
+  dl.glossario { grid-template-columns: minmax(0, 1fr); }
   dl.glossario > dt { border-bottom: 0; padding-bottom: 2px; }
   .boaz-barra { top: 12px; right: 12px; }
   .boaz-barra .rotulo { display: none; }
@@ -639,13 +643,14 @@ dl.glossario > :nth-last-child(-n + 2) { border-bottom: 0; }
   body[data-marca]::after { font-size: 92px; }
   h2 { margin-top: 9mm; break-after: avoid; }
   h3 { break-after: avoid; }
+  .boaz-tabela { overflow: visible; }
   tr, pre, .persona, .metrica, ul.pendencias > li { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
   a.ref { color: var(--accent); }
 }
 </style>
 <script id="boaz-tema-js">
-/* boaz · tema dos documentos de requisito · v01 — tema (claro/sistema/escuro), PDF, marca d'água, Gherkin, sumário */
+/* boaz · tema dos documentos de requisito · v02 — tema (claro/sistema/escuro), PDF, marca d'água, tabelas roláveis, Gherkin, sumário */
 (function () {
   var d = document, h = d.documentElement, CHAVE = "boaz-tema";
   function meta(n) { var m = d.querySelector('meta[name="boaz:' + n + '"]'); return m ? m.content.trim() : ""; }
@@ -719,6 +724,16 @@ dl.glossario > :nth-last-child(-n + 2) { border-bottom: 0; }
     });
     aplicar(guardado());
 
+    // Tabelas largas rolam na horizontal dentro do documento, sem cortar conteúdo
+    var ts = d.querySelectorAll("table");
+    for (var t = 0; t < ts.length; t++) {
+      if (ts[t].parentNode.classList && ts[t].parentNode.classList.contains("boaz-tabela")) continue;
+      var envolve = d.createElement("div");
+      envolve.className = "boaz-tabela";
+      ts[t].parentNode.insertBefore(envolve, ts[t]);
+      envolve.appendChild(ts[t]);
+    }
+
     // Gherkin: destaca palavras-chave e textos entre aspas
     var gs = d.querySelectorAll("pre.gherkin");
     for (var g = 0; g < gs.length; g++) {
@@ -786,8 +801,8 @@ details.boaz-snippet > pre { margin-top: 10px; font-size: 12px; }
   <p class="boaz-objetivo"><span>Objetivo</span>padronizar marca d'água, tipografia, formato e estilo de todo documento <code>.html</code> de <code>1_Requisitos/</code> e mostrar, renderizado, cada componente que um documento pode usar.</p>
   <dl class="boaz-carimbo">
     <div><dt>Documento</dt><dd>tema</dd></div>
-    <div><dt>Versão</dt><dd><span class="boaz-versao">v01</span></dd></div>
-    <div><dt>Data</dt><dd class="boaz-data">2026-10-11 · 15:00</dd></div>
+    <div><dt>Versão</dt><dd><span class="boaz-versao">v02</span></dd></div>
+    <div><dt>Data</dt><dd class="boaz-data">2026-10-11 · 16:00</dd></div>
     <div><dt>Status</dt><dd><span class="status status-aprovado">Aprovado</span></dd></div>
   </dl>
 </header>
@@ -1222,11 +1237,12 @@ Cenário: código expirado
   <table class="boaz-historico">
     <thead><tr><th>Versão</th><th>Data</th><th>Mudança</th></tr></thead>
     <tbody>
+      <tr><td><span class="boaz-versao">v02</span></td><td>2026-10-11 16:00</td><td>Rolagem lateral: tabelas largas rolam dentro do documento, código longo quebra a linha e nada mais é cortado na borda da página</td></tr>
       <tr><td><span class="boaz-versao">v01</span></td><td>2026-10-11 15:00</td><td>Criação: documentos de requisito em <code>.html</code>, com temas claro, sistema e escuro e exportação para PDF</td></tr>
     </tbody>
   </table>
   <div class="boaz-rodape-linha">
-    <span>boaz · v01 · 2026-10-11 15:00</span>
+    <span>boaz · v02 · 2026-10-11 16:00</span>
     <span class="boaz-arquivo">0_Assets/requisitos/tema.html</span>
   </div>
 </footer>
