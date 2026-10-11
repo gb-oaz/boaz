@@ -8,7 +8,7 @@ set -euo pipefail
 
 CONFIG_FILE=".boaz"
 ICONS_DIR="0_Assets/diagramas/icones"
-ICONS_TARBALL="https://codeload.github.com/gb-oaz/boaz/tar.gz/refs/heads/main"
+ASSETS_TARBALL="https://codeload.github.com/gb-oaz/boaz/tar.gz/refs/heads/main"
 DIAGRAM_DIRS="2_Diagramas 3_Arquitetura"
 LEAF_DIRS="0_Assets/projeto 0_Assets/diagramas 1_Requisitos 2_Diagramas 3_Arquitetura 4_CI_CD
            5_DEV/backend 5_DEV/frontend 5_DEV/qa/backend 5_DEV/qa/frontend"
@@ -108,8 +108,7 @@ cmd_init() {
 
   create_readmes
   create_requirements_template
-  create_diagram_theme
-  install_icons
+  install_diagram_assets
   create_diagram_skills
 
   # Mantém no git as pastas que ainda estão vazias
@@ -253,226 +252,35 @@ create_requirements_template() {
 EOF
 }
 
-# ── TEMA DOS DIAGRAMAS ───────────────────────────────────────
-# Referência visual + fonte única do <style>/<defs> copiados para cada diagrama.
-# write_once: o projeto pode customizar o tema sem perder ao rodar init de novo.
-create_diagram_theme() {
-  write_once "0_Assets/diagramas/tema.svg" << 'EOF'
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 736" width="960" height="736">
-  <title>Tema dos diagramas</title>
-  <desc>Tema dark padrão do boaz. As skills de diagrama copiam o bloco style e o bloco defs deste arquivo, sem alterações, para cada SVG gerado. v01: criação.</desc>
-  <style>
-    /* ── base ─────────────────────────────────────────── */
-    .bg            { fill: #0d1117; }
-    text           { font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 13px; fill: #e6edf3; }
-    .title         { font-size: 22px; font-weight: 700; fill: #f0f6fc; }
-    .subtitle      { font-size: 13px; fill: #8b949e; }
-    .label         { font-size: 13px; fill: #e6edf3; }
-    .label-strong  { font-size: 14px; font-weight: 600; fill: #f0f6fc; }
-    .muted         { font-size: 12px; fill: #8b949e; }
-    .mono          { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; font-size: 12px; fill: #8b949e; }
-    .divider       { stroke: #21262d; stroke-width: 1; }
-
-    /* ── nós: uma cor por papel, no máximo 4 por diagrama ── */
-    .node          { fill: #161b22; stroke: #30363d; stroke-width: 1.5; }
-    .node-blue     { fill: #0c2d4a; stroke: #58a6ff; stroke-width: 1.5; }
-    .node-green    { fill: #0f2e1b; stroke: #3fb950; stroke-width: 1.5; }
-    .node-purple   { fill: #271a45; stroke: #bc8cff; stroke-width: 1.5; }
-    .node-orange   { fill: #3a2410; stroke: #f0883e; stroke-width: 1.5; }
-    .node-red      { fill: #3b1219; stroke: #f85149; stroke-width: 1.5; }
-    .node-external { fill: #1c2128; stroke: #6e7681; stroke-width: 1.5; }
-
-    /* ── fronteiras (conta, região, rede, módulo) ─────── */
-    .boundary       { fill: #161b22; fill-opacity: 0.35; stroke: #484f58; stroke-width: 1.2; stroke-dasharray: 6 4; }
-    .boundary-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; fill: #8b949e; }
-
-    /* ── arestas ──────────────────────────────────────── */
-    .edge          { fill: none; stroke: #8b949e; stroke-width: 1.5; }
-    .edge-accent   { fill: none; stroke: #58a6ff; stroke-width: 1.8; }
-    .edge-async    { stroke-dasharray: 6 4; }
-    .edge-label-bg { fill: #0d1117; }
-    .arrow-head    { fill: #8b949e; }
-    .arrow-accent  { fill: #58a6ff; }
-    .lifeline      { stroke: #30363d; stroke-width: 1.2; stroke-dasharray: 4 4; }
-
-    /* ── notação UML ───────────────────────────────────── */
-    .ink           { fill: #e6edf3; }
-    .ink-ring      { fill: none; stroke: #e6edf3; stroke-width: 1.5; }
-    .node-note     { fill: #2b2311; stroke: #d29922; stroke-width: 1.2; }
-    .uml-keyword   { font-size: 11px; font-style: italic; fill: #8b949e; }
-    .arrow-open    { fill: none; stroke: #8b949e; stroke-width: 1.4; stroke-linejoin: round; }
-    .arrow-hollow  { fill: #0d1117; stroke: #8b949e; stroke-width: 1.2; stroke-linejoin: round; }
-
-    /* ── legenda e rodapé ─────────────────────────────── */
-    .legend-box    { fill: #161b22; stroke: #30363d; stroke-width: 1; }
-    .footer        { font-size: 12px; fill: #6e7681; }
-  </style>
-  <defs>
-    <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" class="arrow-head"/>
-    </marker>
-    <marker id="seta-destaque" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" class="arrow-accent"/>
-    </marker>
-    <marker id="seta-aberta" viewBox="-1 -1 12 12" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10" class="arrow-open"/>
-    </marker>
-    <marker id="heranca" viewBox="-1 -1 14 14" refX="12" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-      <path d="M0,0 L12,6 L0,12 z" class="arrow-hollow"/>
-    </marker>
-    <marker id="composicao" viewBox="-1 -1 16 10" refX="14" refY="4" markerWidth="16" markerHeight="11" orient="auto-start-reverse">
-      <path d="M0,4 L7,0 L14,4 L7,8 z" class="arrow-head"/>
-    </marker>
-    <marker id="agregacao" viewBox="-1 -1 16 10" refX="14" refY="4" markerWidth="16" markerHeight="11" orient="auto-start-reverse">
-      <path d="M0,4 L7,0 L14,4 L7,8 z" class="arrow-hollow"/>
-    </marker>
-    <filter id="sombra" x="-10%" y="-10%" width="120%" height="140%">
-      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.45"/>
-    </filter>
-  </defs>
-
-  <rect class="bg" x="0" y="0" width="960" height="736"/>
-
-  <g id="cabecalho">
-    <text class="title" x="40" y="56">Tema dos diagramas</text>
-    <text class="subtitle" x="40" y="80">Referência visual do boaz — copie os blocos style e defs para cada novo SVG</text>
-    <line class="divider" x1="40" y1="100" x2="920" y2="100"/>
-  </g>
-
-  <g id="fronteira">
-    <rect class="boundary" x="40" y="130" width="600" height="320" rx="14"/>
-    <text class="boundary-label" x="58" y="154">FRONTEIRA · CONTEXTO / REDE PRIVADA</text>
-  </g>
-
-  <g id="servico-principal" filter="url(#sombra)">
-    <rect class="node-blue" x="72" y="180" width="200" height="84" rx="10"/>
-    <text class="label-strong" x="172" y="216" text-anchor="middle">Serviço principal</text>
-    <text class="mono" x="172" y="240" text-anchor="middle">[tecnologia]</text>
-  </g>
-
-  <g id="banco-de-dados" filter="url(#sombra)">
-    <rect class="node-green" x="400" y="180" width="200" height="84" rx="10"/>
-    <text class="label-strong" x="500" y="216" text-anchor="middle">Dados</text>
-    <text class="mono" x="500" y="240" text-anchor="middle">[PostgreSQL]</text>
-  </g>
-
-  <g id="fila" filter="url(#sombra)">
-    <rect class="node-purple" x="72" y="340" width="200" height="84" rx="10"/>
-    <text class="label-strong" x="172" y="376" text-anchor="middle">Mensageria</text>
-    <text class="mono" x="172" y="400" text-anchor="middle">[fila · AMQP]</text>
-  </g>
-
-  <g id="regra" filter="url(#sombra)">
-    <rect class="node-orange" x="400" y="340" width="200" height="84" rx="10"/>
-    <text class="label-strong" x="500" y="376" text-anchor="middle">Atenção / regra</text>
-    <text class="mono" x="500" y="400" text-anchor="middle">[validação]</text>
-  </g>
-
-  <g id="sistema-externo" filter="url(#sombra)">
-    <rect class="node-external" x="700" y="180" width="220" height="84" rx="10"/>
-    <text class="label-strong" x="810" y="216" text-anchor="middle">Sistema externo</text>
-    <text class="mono" x="810" y="240" text-anchor="middle">[API de terceiros]</text>
-  </g>
-
-  <g id="arestas">
-    <line class="edge-accent" x1="272" y1="222" x2="398" y2="222" marker-end="url(#seta-destaque)"/>
-    <text class="muted" x="335" y="210" text-anchor="middle">consulta · SQL</text>
-
-    <line class="edge edge-async" x1="172" y1="264" x2="172" y2="338" marker-end="url(#seta)"/>
-    <text class="muted" x="184" y="306">evento</text>
-
-    <line class="edge" x1="272" y1="382" x2="398" y2="382" marker-end="url(#seta)"/>
-    <text class="muted" x="335" y="370" text-anchor="middle">valida</text>
-
-    <line class="edge" x1="600" y1="222" x2="698" y2="222" marker-end="url(#seta)"/>
-    <text class="muted" x="649" y="210" text-anchor="middle">HTTPS</text>
-  </g>
-
-  <g id="legenda">
-    <rect class="legend-box" x="700" y="300" width="220" height="150" rx="10"/>
-    <text class="label-strong" x="716" y="326">Legenda</text>
-    <rect class="node-blue" x="716" y="340" width="14" height="14" rx="3"/>
-    <text class="label" x="740" y="352">Componente do projeto</text>
-    <rect class="node-green" x="716" y="362" width="14" height="14" rx="3"/>
-    <text class="label" x="740" y="374">Dados</text>
-    <rect class="node-purple" x="716" y="384" width="14" height="14" rx="3"/>
-    <text class="label" x="740" y="396">Mensageria</text>
-    <rect class="node-orange" x="716" y="406" width="14" height="14" rx="3"/>
-    <text class="label" x="740" y="418">Atenção / regra</text>
-    <rect class="node-external" x="716" y="428" width="14" height="14" rx="3"/>
-    <text class="label" x="740" y="440">Externo</text>
-  </g>
-
-  <g id="notacao-uml">
-    <text class="boundary-label" x="40" y="490">NOTAÇÃO UML</text>
-
-    <line class="edge" x1="40" y1="520" x2="152" y2="520" marker-end="url(#seta-aberta)"/>
-    <text class="muted" x="40" y="546">associação</text>
-    <line class="edge" x1="188" y1="520" x2="300" y2="520" marker-end="url(#heranca)"/>
-    <text class="muted" x="188" y="546">herança</text>
-    <line class="edge edge-async" x1="336" y1="520" x2="448" y2="520" marker-end="url(#heranca)"/>
-    <text class="muted" x="336" y="546">realização</text>
-    <line class="edge edge-async" x1="484" y1="520" x2="596" y2="520" marker-end="url(#seta-aberta)"/>
-    <text class="muted" x="484" y="546">dependência «use»</text>
-    <line class="edge" x1="632" y1="520" x2="744" y2="520" marker-start="url(#composicao)"/>
-    <text class="muted" x="632" y="546">composição</text>
-    <line class="edge" x1="780" y1="520" x2="892" y2="520" marker-start="url(#agregacao)"/>
-    <text class="muted" x="780" y="546">agregação</text>
-
-    <circle class="ink" cx="56" cy="590" r="8"/>
-    <text class="muted" x="40" y="634">início</text>
-    <circle class="ink-ring" cx="206" cy="590" r="10"/>
-    <circle class="ink" cx="206" cy="590" r="6"/>
-    <text class="muted" x="188" y="634">fim</text>
-    <rect class="ink" x="336" y="587" width="96" height="6" rx="2"/>
-    <text class="muted" x="336" y="634">fork / join</text>
-    <path class="node" d="M500,574 L516,590 L500,606 L484,590 z"/>
-    <text class="muted" x="484" y="634">decisão</text>
-    <path class="node-note" d="M632,570 H736 L748,582 V610 H632 z"/>
-    <path class="node-note" d="M736,570 V582 H748"/>
-    <text class="muted" x="644" y="595">nota</text>
-    <text class="muted" x="632" y="634">nota / restrição</text>
-    <rect class="node" x="780" y="566" width="140" height="48" rx="6"/>
-    <text class="uml-keyword" x="850" y="584" text-anchor="middle">«interface»</text>
-    <text class="label-strong" x="850" y="604" text-anchor="middle">Repositorio</text>
-    <text class="muted" x="780" y="634">estereótipo</text>
-  </g>
-
-  <g id="rodape">
-    <line class="divider" x1="40" y1="656" x2="920" y2="656"/>
-    <text class="footer" x="40" y="684">tema · v01 · referência de estilo</text>
-    <text class="footer" x="40" y="704">Fundo #0d1117 · fonte sans do sistema · cantos 10px · grade de 8px · no máximo 4 cores de papel por diagrama</text>
-  </g>
-</svg>
-EOF
-}
-
-# ── ÍCONES DE CLOUD ──────────────────────────────────────────
-# Copia assets/icones/ do boaz para 0_Assets/diagramas/icones/, sem sobrescrever.
+# ── ASSETS DOS DIAGRAMAS ─────────────────────────────────────
+# Copia de assets/ do boaz, sem sobrescrever (o projeto pode customizar o tema e adicionar ícones):
+#   tema.svg  → 0_Assets/diagramas/tema.svg   (estilo + catálogo de formas e notação)
+#   icones/   → 0_Assets/diagramas/icones/
 # Usa a cópia local (clone do boaz) se existir; senão baixa do GitHub.
-install_icons() {
+install_diagram_assets() {
   local src tmp="" f n=0
-  src="$(cd "$(dirname "$0")" && pwd)/assets/icones"
-  if [ ! -d "$src" ]; then
+  src="$(cd "$(dirname "$0")" && pwd)/assets"
+  if [ ! -f "$src/tema.svg" ]; then
     tmp=$(mktemp -d)
     if command -v curl &>/dev/null; then
-      curl -fsSL "$ICONS_TARBALL" | tar -xzf - -C "$tmp" boaz-main/assets/icones 2>/dev/null || true
+      curl -fsSL "$ASSETS_TARBALL" | tar -xzf - -C "$tmp" boaz-main/assets 2>/dev/null || true
     elif command -v wget &>/dev/null; then
-      wget -qO- "$ICONS_TARBALL" | tar -xzf - -C "$tmp" boaz-main/assets/icones 2>/dev/null || true
+      wget -qO- "$ASSETS_TARBALL" | tar -xzf - -C "$tmp" boaz-main/assets 2>/dev/null || true
     fi
-    src="$tmp/boaz-main/assets/icones"
+    src="$tmp/boaz-main/assets"
   fi
-  if [ ! -d "$src" ]; then
-    warn "Ícones de cloud não baixados (sem rede?) — rode ./boaz.sh init de novo depois."
+  if [ ! -f "$src/tema.svg" ]; then
+    warn "Tema e ícones dos diagramas não baixados (sem rede?) — rode ./boaz.sh init de novo depois."
     [ -z "$tmp" ] || rm -rf "$tmp"
     return
   fi
+  write_once "0_Assets/diagramas/tema.svg" < "$src/tema.svg"
   while IFS= read -r f; do
     [ -e "$ICONS_DIR/$f" ] && continue
     mkdir -p "$(dirname "$ICONS_DIR/$f")"
-    cp "$src/$f" "$ICONS_DIR/$f"
+    cp "$src/icones/$f" "$ICONS_DIR/$f"
     n=$((n + 1))
-  done < <(cd "$src" && find . -type f -name '*.svg' | sed 's|^\./||')
+  done < <(cd "$src/icones" && find . -type f -name '*.svg' | sed 's|^\./||')
   [ -z "$tmp" ] || rm -rf "$tmp"
   [ "$n" -eq 0 ] || success "Ícones de cloud: ${n} novos em ${D}${ICONS_DIR}/${NC}"
 
@@ -542,20 +350,25 @@ Antes de desenhar, rode `ls 0_Assets/projeto 0_Assets/diagramas` e reaproveite o
 Ícones de cloud ficam em `0_Assets/diagramas/icones/{aws,gcp,azure}/` (centenas de arquivos — leia o `README.md` da pasta e busque por nome: `find 0_Assets/diagramas/icones -iname '*lambda*'`, nunca `ls -R`).
 
 - **Embuta sempre** — nunca referencie o arquivo por caminho (`href="../0_Assets/..."` quebra no GitHub e em visualizadores de imagem).
-  - `.svg`: copie o conteúdo gráfico para um `<symbol id="asset-<nome>" viewBox="...">` em `<defs>` (com o `viewBox` do original) e desenhe com `<use href="#asset-<nome>" x=".." y=".." width=".." height=".."/>`. Remova `<script>`, `<foreignObject>`, handlers `on*` e metadados de editor; prefixe ids internos com `<nome>-` para não colidirem.
+  - `.svg`: copie o conteúdo gráfico para um `<symbol id="asset-<nome>" viewBox="...">` em `<defs>` (com o `viewBox` do original) e desenhe com `<use href="#asset-<nome>" x=".." y=".." width=".." height=".."/>`. Remova `<script>`, `<foreignObject>`, handlers `on*` e metadados de editor; prefixe ids internos com `<nome>-` para não colidirem. Se o ícone tiver `<style>` próprio (os do GCP trazem `.cls-1`, `.st0`…), converta cada regra em atributo (`fill="#4285f4"`) nos elementos e apague o `<style>` — senão as classes vazam e colidem com outros ícones. O `tema.svg` traz exemplos prontos em `#prov-*`.
   - `.png`/`.jpg`/`.webp`: `<image href="data:image/png;base64,..."/>` gerado com `base64 < arquivo | tr -d '\n'`. Evite arquivos acima de ~200 KB.
-- Ícone é apoio, não substitui o texto: a caixa continua com nome e tecnologia escritos. Tamanho uniforme (24–32px), sempre no mesmo canto da caixa.
-- Faltou um ícone? Use a forma simples da notação e mencione na resposta qual asset poderia ser adicionado em `0_Assets/diagramas/`.
+- Ícone é apoio, não substitui o texto: a caixa continua com nome e tecnologia escritos. Tamanho uniforme (24–32px), sempre no mesmo lugar da caixa (padrão do tema: à esquerda, nome e tecnologia alinhados depois dele).
+- Faltou um ícone? Use a forma neutra `#ic-*` do tema que mais se aproxima (ou a forma simples da notação) e mencione na resposta qual asset poderia ser adicionado em `0_Assets/diagramas/`.
 
 ## Visual (obrigatório)
 
 O diagrama precisa ser **bonito**, não só correto — algo que daria orgulho de colocar numa apresentação.
 
-**Tema padrão (modo dark).** Abra `0_Assets/diagramas/tema.svg` e copie **sem alterar** os blocos `<style>` e `<defs>` (markers `seta`/`seta-destaque`, filtro `sombra`) para o novo SVG; acrescente em `<defs>` só os `<symbol>` de assets. Se o arquivo não existir, rode `./boaz.sh init` para recriá-lo.
+**Tema padrão (modo dark).** `0_Assets/diagramas/tema.svg` é o estilo e o catálogo visual: cores por papel, tipografia, tipos de comunicação, formas neutras de arquitetura, exemplo de arquitetura, ícones por provedor e um cartão por tipo de diagrama UML com os elementos que ele usa. Abra-o (`grep -n 'id="' 0_Assets/diagramas/tema.svg` lista seções e símbolos) e:
+- copie **sem alterar** o bloco `<style>` e, de `<defs>`, todos os `<marker>` e o filtro `sombra`;
+- dos `<symbol>`, copie **só os que usar**: `#ic-*` (formas neutras de arquitetura — banco, fila, função, gateway…), `#uml-*` (ator, ícone de componente, artefato), `#prov-*` (ícones oficiais de exemplo);
+- use o cartão do tipo de diagrama (seção 6, `<g id="uml-...">`, `er`, `c4`) como referência de composição.
+Se o arquivo não existir, rode `./boaz.sh init` para recriá-lo.
 - Estilize **apenas por classe** do tema (`node-blue`, `edge`, `label-strong`, `muted`...). Nada de `fill`/`stroke`/`font-*` inline nem cores fora do tema.
 - Fundo: primeiro elemento `<rect class="bg">` cobrindo todo o `viewBox`.
 - Cor = papel: no máximo 4 classes `node-*` coloridas por diagrama, cada uma explicada na legenda; `node-external` para o que não é do projeto, `node-red` só para erro/risco. Destaque o fluxo principal com `edge-accent` + `seta-destaque`; o resto com `edge`. Assíncrono/retorno: adicione `edge-async`.
-- Notação UML com os elementos do tema: markers `seta-aberta`, `heranca`, `composicao`, `agregacao` e classes `ink`, `ink-ring`, `node-note`, `uml-keyword` (a vitrine "NOTAÇÃO UML" do `tema.svg` mostra cada um). Se o tema do projeto for antigo e não tiver algum deles, declare-o no diagrama com as mesmas cores do tema.
+- Comunicação (seção 2 do tema): síncrono principal `edge-accent` + `seta-destaque`; síncrono `edge` + `seta`; resposta `edge edge-async` + `seta-aberta`; evento/mensagem `edge edge-async` + `seta`; stream bidirecional `seta` nas duas pontas; dados/lote `edge edge-data`. Protocolo no rótulo da aresta ou como `chip` + `chip-text`.
+- Notação UML com os elementos do tema: markers `seta-aberta`, `heranca`, `extensao`, `composicao`, `agregacao`, `er-um`, `er-muitos` e classes `ink`, `ink-ring`, `node-note`, `node-face`, `uml-keyword`, `label-underline`, `activation`, `frame-tag`, `frame-op`. Se o tema do projeto for antigo e não tiver algum deles, declare-o no diagrama com as mesmas cores do tema (ou recrie o tema: apague `0_Assets/diagramas/tema.svg` e rode `./boaz.sh init`).
 
 **Composição.**
 - Grade de 8px: coordenadas e tamanhos múltiplos de 8; margem externa de 40px; espaço mínimo de 48px entre caixas.
@@ -634,19 +447,19 @@ Siga a UML 2.5 com os elementos do tema; não invente símbolos. Multiplicidades
 
 **Estruturais**
 - **Classes**: caixa em 3 compartimentos separados por linha (nome em `label-strong` · atributos · operações em `mono`, com visibilidade `+ - # ~` e tipos `nome: Tipo`). Abstrata: `«abstract»`; interface: `«interface»`. Relações: associação (linha, `seta-aberta` se navegável, papéis e multiplicidade `1`, `0..*` nas pontas), herança (`heranca`), realização (`edge-async` + `heranca`), dependência (`edge-async` + `seta-aberta`), composição (`composicao` no lado do todo), agregação (`agregacao` no lado do todo).
-- **Objetos**: caixas com nome sublinhado `pedido1 : Pedido` (`text-decoration: underline`) e valores `campo = valor` em `mono`; vínculos sem multiplicidade. Mostra um instante concreto do diagrama de classes.
+- **Objetos**: caixas com nome sublinhado `pedido1 : Pedido` (classes `label-strong label-underline`) e valores `campo = valor` em `mono`; vínculos sem multiplicidade. Mostra um instante concreto do diagrama de classes.
 - **Pacotes**: pasta com aba (retângulo pequeno sobre o retângulo principal) e nome; elementos dentro ou listados. Dependências `edge-async` + `seta-aberta` rotuladas `«import»`/`«access»`. Evite ciclos — se existirem, destaque com `node-red`.
-- **Componentes**: retângulo com `«component»` e o ícone de componente no canto superior direito (retângulo com dois pequenos retângulos na borda esquerda). Interface fornecida = pirulito (linha + círculo `ink-ring`); requerida = soquete (meio-círculo aberto). Conecte soquete ao pirulito; portas como quadrados pequenos na borda.
+- **Componentes**: retângulo com `«component»` e o ícone `#uml-componente` no canto superior direito. Interface fornecida = pirulito (linha + círculo `ink-ring`); requerida = soquete (meio-círculo aberto). Conecte soquete ao pirulito; portas como quadrados pequenos (`node-face`) sobre a borda.
 - **Estrutura composta**: um classificador grande cujo interior mostra as partes `nome : Tipo [mult]`, portas na borda e conectores entre partes. Colaborações em elipse tracejada.
-- **Perfil**: pacote `«profile»` com estereótipos `«stereotype» Nome` estendendo metaclasses `«metaclass» Class` por seta de extensão (linha contínua + triângulo **preenchido** — declare um marker `extensao` com `arrow-head`). Liste as tagged values em `mono`.
-- **Entidade-relacionamento** (não UML, mas útil): tabelas com chave (`PK`, `FK` em `mono`), cardinalidade nas pontas.
+- **Perfil**: pacote `«profile»` com estereótipos `«stereotype» Nome` estendendo metaclasses `«metaclass» Class` por seta de extensão (linha contínua + marker `extensao`, triângulo **preenchido**). Liste as tagged values em `mono`.
+- **Entidade-relacionamento** (não UML, mas útil): tabelas com chave (`PK`, `FK` em `mono`), cardinalidade nas pontas com os markers `er-um` e `er-muitos` (pé de galinha).
 
 **Comportamentais**
-- **Casos de uso**: fronteira do sistema (`boundary`, nome no topo), atores como bonecos de palito fora dela (cabeça `ink-ring`, corpo em `edge`, nome abaixo), casos de uso em elipses com verbo + objeto (`Cadastrar usuário`). `«include»`/`«extend»` com `edge-async` + `seta-aberta`; generalização com `heranca`. Se `1_Requisitos/` tiver IDs (`RF-01`), cite-os em `muted` dentro/abaixo da elipse.
+- **Casos de uso**: fronteira do sistema (`boundary`, nome no topo), atores como bonecos de palito fora dela (`#uml-ator`, nome abaixo), casos de uso em elipses com verbo + objeto (`Cadastrar usuário`). `«include»`/`«extend»` com `edge-async` + `seta-aberta`; generalização com `heranca`. Se `1_Requisitos/` tiver IDs (`RF-01`), cite-os em `muted` dentro/abaixo da elipse.
 - **Atividades**: início `ink` (círculo cheio), fim `ink-ring` + `ink` (alvo), ações em retângulos arredondados, decisão/merge em losango com guardas `[sim]`/`[não]`, fork/join em barra `ink`. Raias (swimlanes) como colunas `boundary` rotuladas no topo quando houver mais de um responsável.
-- **Sequência**: participantes no topo (`:Classe` ou ator), linha de vida `lifeline`, barras de ativação estreitas sobre ela. Mensagem síncrona: linha + `seta`; assíncrona: linha + `seta-aberta`; retorno: `edge-async` + `seta-aberta`. Numere as mensagens. Fragmentos combinados (`alt`, `opt`, `loop`, `par`) como retângulos `boundary` com o operador num pentágono no canto e guardas `[condição]`.
+- **Sequência**: participantes no topo (`:Classe` ou ator), linha de vida `lifeline`, barras de ativação estreitas (`activation`) sobre ela. Mensagem síncrona: linha + `seta`; assíncrona: linha + `seta-aberta`; retorno: `edge-async` + `seta-aberta`. Numere as mensagens. Fragmentos combinados (`alt`, `opt`, `loop`, `par`) como retângulos `boundary` com o operador num pentágono no canto (`frame-tag` + `frame-op`) e guardas `[condição]`.
 - **Comunicação**: objetos em caixas ligados por linhas simples (vínculos); ao longo de cada vínculo, mensagens numeradas `1: criar()`, `1.1: validar()` com uma pequena seta indicando a direção.
-- **Visão geral de interação**: estrutura de atividades (início, decisões, fork, fim) onde cada nó é um quadro `ref` (retângulo com rótulo `ref` no canto) apontando para outro diagrama de sequência — cite a legenda/versão do diagrama referenciado — ou uma interação inline pequena.
+- **Visão geral de interação**: estrutura de atividades (início, decisões, fork, fim) onde cada nó é um quadro `ref` (retângulo com `ref` num pentágono `frame-tag` + `frame-op` no canto) apontando para outro diagrama de sequência — cite a legenda/versão do diagrama referenciado — ou uma interação inline pequena.
 - **Estados**: estado inicial `ink`, estados em retângulos bem arredondados (`rx="16"`) com nome e, se houver, `entry/`, `do/`, `exit/` em `mono`; transições `evento [guarda] / ação`; estado final `ink-ring` + `ink`. Estados compostos como um estado grande contendo os subestados.
 - **Tempo**: eixo de tempo horizontal com marcas e unidade; uma faixa por participante (nome à esquerda) com a linha de estado em degraus (`edge-accent`) mudando de nível a cada transição; restrições de duração `{≤ 200 ms}` entre marcas com `edge-async`.
 
@@ -719,10 +532,11 @@ Se o termo não estiver na tabela, crie um equivalente neutro no mesmo estilo (c
 ## Notação
 
 - **C4 contexto/contêiner**: como descrito abaixo nas regras gerais.
-- **Componentes (nível de serviço)**: cada serviço ou sistema em retângulo com `«component»` (ou `«system»`) e o ícone de componente no canto; interface fornecida = pirulito (linha + círculo `ink-ring`) rotulada com o contrato (`REST /pedidos`, `tópico pedido.criado`); requerida = soquete (meio-círculo). Conecte soquete ao pirulito.
-- **Implantação UML**: nós como caixas 3D (retângulo com face superior e lateral em paralelogramos, `node`) com `«device»` ou `«executionEnvironment»` e o nome (`Cluster Kubernetes gerenciado`, `Máquina virtual`, `Navegador`); nós podem conter nós. Artefatos dentro dos nós como retângulos com `«artifact»` e nome do arquivo/imagem (`api:1.4.2` em `mono`). Caminhos de comunicação como linhas entre nós rotuladas com protocolo; dependência artefato→componente com `edge-async` + `seta-aberta` `«manifest»`.
+- **Componentes (nível de serviço)**: cada serviço ou sistema em retângulo com `«component»` (ou `«system»`) e o ícone `#uml-componente` no canto; interface fornecida = pirulito (linha + círculo `ink-ring`) rotulada com o contrato (`REST /pedidos`, `tópico pedido.criado`); requerida = soquete (meio-círculo). Conecte soquete ao pirulito.
+- **Implantação UML**: nós como caixas 3D (retângulo `node` com face superior e lateral em paralelogramos `node-face`) com `«device»` ou `«executionEnvironment»` e o nome (`Cluster Kubernetes gerenciado`, `Máquina virtual`, `Navegador`); nós podem conter nós. Artefatos dentro dos nós como retângulos com `«artifact»`, o ícone `#uml-artefato` e nome do arquivo/imagem (`api:1.4.2` em `mono`). Caminhos de comunicação como linhas entre nós rotuladas com protocolo; dependência artefato→componente com `edge-async` + `seta-aberta` `«manifest»`.
 - Cada caixa: nome em negrito, tecnologia entre colchetes (`[PostgreSQL 16]`, `[Função serverless]`) e uma linha de responsabilidade.
-- Ícones de tecnologias vêm de `0_Assets/diagramas/` (embutidos, ver **Assets**). Ícones de provedor (`icones/aws/`, `icones/gcp/`, `icones/azure/`) só quando o pedido fixar o provedor — no diagrama neutro, nada de logo de produto. Com provedor fixado, use `icones/aws/grupos/` para as fronteiras (região, VPC, sub-redes). Sem ícone, use formas simples — pessoa para ator, cilindro para banco, retângulo para serviço, retângulo com borda dupla para fila/mensageria.
+- Ícones: no diagrama neutro, use as formas neutras `#ic-*` do tema (seção 3 — `ic-banco-sql`, `ic-fila`, `ic-funcao`, `ic-gateway`, `ic-cdn`, `ic-objetos`, `ic-identidade`…) com 24px à esquerda do nome, como no exemplo da seção 4; nada de logo de produto. Ícones de tecnologias abertas e logos de integrações vêm de `0_Assets/diagramas/` (embutidos, ver **Assets**).
+- Ícones de provedor (`icones/aws/`, `icones/gcp/`, `icones/azure/`) só quando o pedido fixar o provedor: substituem a forma neutra da mesma categoria (seção 5 do tema mostra a correspondência). Com provedor fixado, use `icones/aws/grupos/` para as fronteiras (região, VPC, sub-redes).
 - Fronteiras (conta/assinatura/projeto, região, rede privada, cluster, ambiente) como retângulos tracejados rotulados no canto superior esquerdo.
 - Setas rotuladas com o que trafega e o protocolo (`pedidos · HTTPS/JSON`, `eventos · AMQP`).
 - Sistemas externos com `node-external`, para separar do que é do projeto.

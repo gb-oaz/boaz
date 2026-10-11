@@ -47,7 +47,7 @@ O nome fica salvo em `.boaz`. Rodar `./boaz.sh init` de novo só cria o que esti
 projeto/
 ├── 0_Assets/
 │   ├── projeto/         # Marca, logos, imagens, fontes
-│   └── diagramas/       # tema.svg (estilo padrão), ícones de tecnologias
+│   └── diagramas/       # tema.svg (estilo + catálogo visual), ícones de tecnologias
 │       └── icones/      # ícones oficiais AWS, GCP e Azure (.svg), instalados pelo init
 ├── 1_Requisitos/        # O produto desejado (.md) — sem backend, frontend ou tecnologia
 ├── 2_Diagramas/         # Diagramas de desenvolvimento, backend e frontend (.svg)
@@ -112,9 +112,19 @@ As skills conhecem os 14 diagramas da UML 2.5 e escolhem o tipo pela pergunta, q
 
 ### Visual e assets
 
-- Todos os diagramas usam o mesmo **tema dark** definido em `0_Assets/diagramas/tema.svg` — abra o arquivo para ver a referência. As skills copiam o `<style>` e os `<defs>` dele e estilizam só por classes CSS; edite o tema para mudar o visual dos próximos diagramas.
-- O `init` instala em `0_Assets/diagramas/icones/` os ícones oficiais de **AWS** (pacote de 07/2025: serviços, recursos, grupos e categorias) **GCP** (produtos, categorias e o conjunto legado) e **Azure** (Public Service Icons V24, por categoria) — ~1.800 `.svg` versionados em [`assets/icones/`](assets/icones). Só copia o que falta, então ícones seus nunca são sobrescritos. Sem rede, o init avisa e segue; rode de novo depois.
-- Coloque em `0_Assets/diagramas/` outros ícones de tecnologias e logos de integrações (de preferência `.svg`). Os diagramas de arquitetura são **neutros de provedor** (valem para Azure, AWS e GCP): usam categorias como *função serverless* ou *armazenamento de objetos*, nunca nomes de produto de um só provedor — os ícones de AWS/GCP/Azure só entram quando o pedido fixa o provedor. As skills procuram ali antes de desenhar e **embutem** o asset no SVG, que continua autocontido e renderiza no GitHub.
+- Todos os diagramas usam o mesmo **tema dark** de [`assets/tema.svg`](assets/tema.svg), instalado em `0_Assets/diagramas/tema.svg`. Além do estilo, ele é um **catálogo visual** do que os diagramas podem usar:
+  1. cores por papel e tipografia;
+  2. tipos de comunicação (síncrono, retorno, evento, stream, dados/lote) e chips de protocolo;
+  3. 24 formas neutras de arquitetura (`#ic-*`: banco, fila, função, gateway, CDN, cofre…);
+  4. um exemplo de arquitetura neutra com fronteiras conta → rede → sub-rede;
+  5. a correspondência neutro → AWS / Azure / GCP com os ícones oficiais;
+  6. um cartão por tipo de diagrama UML (os 14, mais ER e C4) com os elementos que ele usa.
+
+  As skills copiam o `<style>`, os markers e só os `<symbol>` que usarem, e estilizam por classes CSS. Edite o tema do projeto para mudar o visual dos próximos diagramas; para receber uma versão nova do boaz, apague `0_Assets/diagramas/tema.svg` e rode `./boaz.sh init`.
+
+  No repositório do boaz, o tema é gerado por [`scripts/gerar-tema.py`](scripts/gerar-tema.py): edite o script e rode `python3 scripts/gerar-tema.py` para atualizar `assets/tema.svg`.
+- O `init` instala em `0_Assets/diagramas/icones/` os ícones oficiais de **AWS** (pacote de 07/2025: serviços, recursos, grupos e categorias) **GCP** (produtos, categorias e o conjunto legado) e **Azure** (Public Service Icons V24, por categoria) — ~1.800 `.svg` versionados em [`assets/icones/`](assets/icones). Tema e ícones: só copia o que falta, então customizações suas nunca são sobrescritas. Sem rede, o init avisa e segue; rode de novo depois.
+- Coloque em `0_Assets/diagramas/` outros ícones de tecnologias e logos de integrações (de preferência `.svg`). Os diagramas de arquitetura são **neutros de provedor** (valem para Azure, AWS e GCP): usam categorias como *função serverless* ou *armazenamento de objetos*, nunca nomes de produto de um só provedor — os ícones de AWS/GCP/Azure só entram quando o pedido fixa o provedor. No diagrama neutro, as caixas usam as formas `#ic-*` do tema. As skills procuram em `0_Assets/` antes de desenhar e **embutem** o asset no SVG, que continua autocontido e renderiza no GitHub.
 - Antes de entregar, a skill valida o XML e, se houver `rsvg-convert`/`qlmanage`, renderiza uma prévia para corrigir sobreposições e desalinhamentos.
 
 ---
