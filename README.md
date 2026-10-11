@@ -73,7 +73,7 @@ No Claude Code, peça o diagrama pela skill:
 
 ```
 /diagrama-dev diagrama de sequência do cadastro de usuário
-/diagrama-arquitetura visão de contêineres na AWS com fila de pagamentos
+/diagrama-arquitetura visão de contêineres em cloud com fila de pagamentos
 /diagrama-dev no fluxo-cadastro, adicione a validação de e-mail
 ```
 
@@ -112,7 +112,7 @@ As skills conhecem os 14 diagramas da UML 2.5 e escolhem o tipo pela pergunta, q
 ### Visual e assets
 
 - Todos os diagramas usam o mesmo **tema dark** definido em `0_Assets/diagramas/tema.svg` — abra o arquivo para ver a referência. As skills copiam o `<style>` e os `<defs>` dele e estilizam só por classes CSS; edite o tema para mudar o visual dos próximos diagramas.
-- Coloque em `0_Assets/diagramas/` ícones de cloud, tecnologias e logos de integrações (de preferência `.svg`). As skills procuram ali antes de desenhar e **embutem** o asset no SVG, que continua autocontido e renderiza no GitHub.
+- Coloque em `0_Assets/diagramas/` ícones de cloud, tecnologias e logos de integrações (de preferência `.svg`). Os diagramas de arquitetura são **neutros de provedor** (valem para Azure, AWS e GCP): usam categorias como *função serverless* ou *armazenamento de objetos*, nunca nomes de produto de um só provedor. As skills procuram ali antes de desenhar e **embutem** o asset no SVG, que continua autocontido e renderiza no GitHub.
 - Antes de entregar, a skill valida o XML e, se houver `rsvg-convert`/`qlmanage`, renderiza uma prévia para corrigir sobreposições e desalinhamentos.
 
 ---

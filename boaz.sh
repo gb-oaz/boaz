@@ -152,7 +152,9 @@ Recursos reutilizáveis do projeto e dos diagramas.
 ```
 
 - Prefira `.svg`; raster (`.png`, `.jpg`, `.webp`) só quando não houver vetor.
-- Nomes em kebab-case, sem acentos: `aws-lambda.svg`, `logo-principal.svg`.
+- Nomes em kebab-case, sem acentos: `funcao-serverless.svg`, `logo-principal.svg`.
+- Ícones de cloud neutros (categoria do serviço), não de um único provedor —
+  a arquitetura deve valer para Azure, AWS e GCP.
 - As skills de diagrama procuram aqui antes de desenhar e **embutem** o asset no SVG
   gerado (o diagrama continua autocontido e renderiza em qualquer lugar).
 - `diagramas/tema.svg` define o visual de todos os diagramas: edite-o para mudar
@@ -276,7 +278,7 @@ create_diagram_theme() {
     .node-red      { fill: #3b1219; stroke: #f85149; stroke-width: 1.5; }
     .node-external { fill: #1c2128; stroke: #6e7681; stroke-width: 1.5; }
 
-    /* ── fronteiras (conta, região, VPC, módulo) ───────── */
+    /* ── fronteiras (conta, região, rede, módulo) ─────── */
     .boundary       { fill: #161b22; fill-opacity: 0.35; stroke: #484f58; stroke-width: 1.2; stroke-dasharray: 6 4; }
     .boundary-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; fill: #8b949e; }
 
@@ -335,7 +337,7 @@ create_diagram_theme() {
 
   <g id="fronteira">
     <rect class="boundary" x="40" y="130" width="600" height="320" rx="14"/>
-    <text class="boundary-label" x="58" y="154">FRONTEIRA · CONTEXTO / VPC</text>
+    <text class="boundary-label" x="58" y="154">FRONTEIRA · CONTEXTO / REDE PRIVADA</text>
   </g>
 
   <g id="servico-principal" filter="url(#sombra)">
@@ -609,7 +611,7 @@ Você é arquiteto de soluções. A saída é **sempre um novo arquivo `.svg`** 
 
 ## Escopo
 
-Pertence aqui a **visão de alto nível**: contexto do sistema e atores, contêineres/serviços e suas tecnologias, provedores de cloud e serviços gerenciados, rede (região, VPC, sub-redes), ambientes, topologia de deploy, filas e integrações externas.
+Pertence aqui a **visão de alto nível**: contexto do sistema e atores, contêineres/serviços e suas tecnologias, provedores de cloud e serviços gerenciados, rede (região, rede privada, sub-redes), ambientes, topologia de deploy, filas e integrações externas.
 
 Não pertence: detalhe interno de código (classes, objetos, pacotes, sequência entre métodos, estados, telas e demais UML de código) → skill `diagrama-dev` (`2_Diagramas/`).
 
@@ -624,14 +626,45 @@ Se o pedido nomear o tipo, use-o. Senão, escolha pela pergunta e diga na respos
 | Quais serviços/sistemas existem e quais interfaces expõem e consomem? | Componentes UML (nível de serviço) |
 | Onde cada artefato roda — nós, ambientes, rede? | Implantação UML |
 
+## Neutralidade de provedor
+
+A arquitetura deve valer para **Azure, AWS e GCP**. Nunca use nome de produto de um único provedor (`Lambda`, `EKS`, `S3`, `Cosmos DB`, `BigQuery`…): nomeie pela **categoria** do serviço gerenciado. Tecnologias abertas e portáveis (PostgreSQL, Kubernetes, Kafka, Redis, Docker) podem ser citadas. Só use o nome de um provedor se o pedido o exigir explicitamente — e então diga isso na resposta.
+
+| Termo neutro | AWS | Azure | GCP |
+|---|---|---|---|
+| Rede privada / sub-rede | VPC / Subnet | VNet / Subnet | VPC / Subnet |
+| Conta / assinatura / projeto | Account | Subscription | Project |
+| Máquina virtual | EC2 | Virtual Machines | Compute Engine |
+| Função serverless | Lambda | Functions | Cloud Functions / Cloud Run functions |
+| Contêiner serverless | Fargate / App Runner | Container Apps | Cloud Run |
+| Cluster Kubernetes gerenciado | EKS | AKS | GKE |
+| Armazenamento de objetos | S3 | Blob Storage | Cloud Storage |
+| Banco relacional gerenciado | RDS / Aurora | Azure Database / SQL Database | Cloud SQL / AlloyDB |
+| Banco NoSQL gerenciado | DynamoDB | Cosmos DB | Firestore / Bigtable |
+| Cache gerenciado | ElastiCache | Azure Cache for Redis | Memorystore |
+| Fila de mensagens | SQS | Service Bus / Storage Queues | Pub/Sub / Cloud Tasks |
+| Barramento / tópico de eventos | SNS / EventBridge | Event Grid / Event Hubs | Pub/Sub / Eventarc |
+| API gateway | API Gateway | API Management | API Gateway / Apigee |
+| Balanceador de carga | ELB / ALB | Load Balancer / Application Gateway | Cloud Load Balancing |
+| CDN | CloudFront | Front Door / CDN | Cloud CDN |
+| DNS gerenciado | Route 53 | Azure DNS | Cloud DNS |
+| Identidade de usuários | Cognito | Entra ID / Entra External ID | Identity Platform |
+| Identidade e acesso (IAM) | IAM | Entra ID + RBAC | IAM |
+| Cofre de segredos | Secrets Manager | Key Vault | Secret Manager |
+| Observabilidade (logs/métricas) | CloudWatch | Azure Monitor | Cloud Logging / Monitoring |
+| Data warehouse | Redshift | Synapse / Fabric | BigQuery |
+| Registro de contêineres | ECR | Container Registry | Artifact Registry |
+
+Se o termo não estiver na tabela, crie um equivalente neutro no mesmo estilo (categoria + "gerenciado", quando couber).
+
 ## Notação
 
 - **C4 contexto/contêiner**: como descrito abaixo nas regras gerais.
 - **Componentes (nível de serviço)**: cada serviço ou sistema em retângulo com `«component»` (ou `«system»`) e o ícone de componente no canto; interface fornecida = pirulito (linha + círculo `ink-ring`) rotulada com o contrato (`REST /pedidos`, `tópico pedido.criado`); requerida = soquete (meio-círculo). Conecte soquete ao pirulito.
-- **Implantação UML**: nós como caixas 3D (retângulo com face superior e lateral em paralelogramos, `node`) com `«device»` ou `«executionEnvironment»` e o nome (`Cluster EKS`, `VM`, `Navegador`); nós podem conter nós. Artefatos dentro dos nós como retângulos com `«artifact»` e nome do arquivo/imagem (`api:1.4.2` em `mono`). Caminhos de comunicação como linhas entre nós rotuladas com protocolo; dependência artefato→componente com `edge-async` + `seta-aberta` `«manifest»`.
-- Cada caixa: nome em negrito, tecnologia entre colchetes (`[PostgreSQL 16]`, `[AWS Lambda]`) e uma linha de responsabilidade.
+- **Implantação UML**: nós como caixas 3D (retângulo com face superior e lateral em paralelogramos, `node`) com `«device»` ou `«executionEnvironment»` e o nome (`Cluster Kubernetes gerenciado`, `Máquina virtual`, `Navegador`); nós podem conter nós. Artefatos dentro dos nós como retângulos com `«artifact»` e nome do arquivo/imagem (`api:1.4.2` em `mono`). Caminhos de comunicação como linhas entre nós rotuladas com protocolo; dependência artefato→componente com `edge-async` + `seta-aberta` `«manifest»`.
+- Cada caixa: nome em negrito, tecnologia entre colchetes (`[PostgreSQL 16]`, `[Função serverless]`) e uma linha de responsabilidade.
 - Ícones de provedores/tecnologias vêm de `0_Assets/diagramas/` (embutidos, ver **Assets**). Sem ícone, use formas simples — pessoa para ator, cilindro para banco, retângulo para serviço, retângulo com borda dupla para fila/mensageria.
-- Fronteiras (conta, região, VPC, cluster, ambiente) como retângulos tracejados rotulados no canto superior esquerdo.
+- Fronteiras (conta/assinatura/projeto, região, rede privada, cluster, ambiente) como retângulos tracejados rotulados no canto superior esquerdo.
 - Setas rotuladas com o que trafega e o protocolo (`pedidos · HTTPS/JSON`, `eventos · AMQP`).
 - Sistemas externos com `node-external`, para separar do que é do projeto.
 EOF
