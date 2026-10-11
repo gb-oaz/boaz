@@ -258,7 +258,7 @@ EOF
 #   icones/   → 0_Assets/diagramas/icones/
 # Usa a cópia local (clone do boaz) se existir; senão baixa do GitHub.
 install_diagram_assets() {
-  local src tmp="" f n=0
+  local src tmp="" n
   src="$(cd "$(dirname "$0")" && pwd)/assets"
   if [ ! -f "$src/tema.svg" ]; then
     tmp=$(mktemp -d)
@@ -275,12 +275,11 @@ install_diagram_assets() {
     return
   fi
   write_once "0_Assets/diagramas/tema.svg" < "$src/tema.svg"
-  while IFS= read -r f; do
-    [ -e "$ICONS_DIR/$f" ] && continue
-    mkdir -p "$(dirname "$ICONS_DIR/$f")"
-    cp "$src/icones/$f" "$ICONS_DIR/$f"
-    n=$((n + 1))
-  done < <(cd "$src/icones" && find . -type f -name '*.svg' | sed 's|^\./||')
+  # cp -Rn: copia a árvore de uma vez, sem sobrescrever (|| true: alguns cp saem com 1 ao pular arquivos)
+  mkdir -p "$ICONS_DIR"
+  n=$(find "$ICONS_DIR" -type f -name '*.svg' | wc -l)
+  cp -Rn "$src/icones/." "$ICONS_DIR/" 2>/dev/null || true
+  n=$(( $(find "$ICONS_DIR" -type f -name '*.svg' | wc -l) - n ))
   [ -z "$tmp" ] || rm -rf "$tmp"
   [ "$n" -eq 0 ] || success "Ícones de cloud: ${n} novos em ${D}${ICONS_DIR}/${NC}"
 
