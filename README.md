@@ -91,7 +91,12 @@ Cada pedido — criação ou alteração — gera um **arquivo novo**; nenhuma v
 - **v\<NN\>** — versão, começa em `01`
 - **timestamp** — quando aquela versão foi gerada
 
-O próprio SVG traz a legenda, versão e data no rodapé, e o histórico de mudanças em `<desc>`.
+Todo SVG traz uma **marca d'água** que o identifica como parte da documentação:
+
+- **topo** — projeto e tipo de diagrama, nome do diagrama, e um carimbo com a **versão** e a **data** daquela versão;
+- **rodapé** — a **legenda** (as cores e os tipos de seta usados no desenho), o que mudou na versão e o nome do arquivo.
+
+O histórico de mudanças fica também em `<desc>`.
 
 Nos requisitos, referencie a versão exata:
 
@@ -119,8 +124,9 @@ As skills conhecem os 14 diagramas da UML 2.5 e escolhem o tipo pela pergunta, q
   4. um exemplo de arquitetura neutra com fronteiras conta → rede → sub-rede;
   5. a correspondência neutro → AWS / Azure / GCP com os ícones oficiais;
   6. um cartão por tipo de diagrama UML (os 14, mais ER e C4) com os elementos que ele usa.
+  7. um exemplo da marca d'água de topo e rodapé, com cada parte anotada.
 
-  As skills copiam o `<style>`, os markers e só os `<symbol>` que usarem, e estilizam por classes CSS. Edite o tema do projeto para mudar o visual dos próximos diagramas; para receber uma versão nova do boaz, apague `0_Assets/diagramas/tema.svg` e rode `./boaz.sh init`.
+  As skills copiam o `<style>`, os markers, o gradiente da marca d'água e só os `<symbol>` que usarem, e estilizam por classes CSS. Edite o tema do projeto para mudar o visual dos próximos diagramas; para receber uma versão nova do boaz, apague `0_Assets/diagramas/tema.svg` e rode `./boaz.sh init`.
 
   No repositório do boaz, o tema é gerado por [`scripts/gerar-tema.py`](scripts/gerar-tema.py): edite o script e rode `python3 scripts/gerar-tema.py` para atualizar `assets/tema.svg`.
 - O `init` instala em `0_Assets/diagramas/icones/` os ícones oficiais de **AWS** (pacote de 07/2025: serviços, recursos, grupos e categorias) **GCP** (produtos, categorias e o conjunto legado) e **Azure** (Public Service Icons V24, por categoria) — ~1.800 `.svg` versionados em [`assets/icones/`](assets/icones). Tema e ícones: só copia o que falta, então customizações suas nunca são sobrescritas. Sem rede, o init avisa e segue; rode de novo depois.

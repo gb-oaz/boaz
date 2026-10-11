@@ -15,7 +15,8 @@ import xml.etree.ElementTree as ET
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = sys.argv[1] if len(sys.argv) > 1 else f"{ROOT}/assets/tema.svg"
 ICONS = f"{ROOT}/assets/icones"
-W, H = 1280, 3296
+W = 1280
+VERSAO, DATA = "v03", "2026-10-11"
 
 # ───────────────────────────── estilo ─────────────────────────────
 STYLE = """
@@ -75,13 +76,22 @@ STYLE = """
     .arrow-open    { fill: none; stroke: #8b949e; stroke-width: 1.4; stroke-linejoin: round; }
     .arrow-hollow  { fill: #0d1117; stroke: #8b949e; stroke-width: 1.2; stroke-linejoin: round; }
 
-    /* ── legenda e rodapé ─────────────────────────────── */
-    .legend-box    { fill: #161b22; stroke: #30363d; stroke-width: 1; }
+    /* ── marca d'água: topo e rodapé (seção 7) ────────── */
+    .wm-band       { fill: #11161e; }
+    .wm-accent     { fill: url(#marca-acento); }
+    .wm-sep        { stroke: #30363d; stroke-width: 1; }
+    .wm-frame      { fill: none; stroke: #30363d; stroke-width: 1; }
+    .wm-eyebrow    { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; fill: #58a6ff; }
+    .wm-meta-label { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; fill: #6e7681; }
+    .wm-meta-value { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; font-size: 13px; fill: #e6edf3; }
+    .wm-badge      { fill: #0c2d4a; stroke: #58a6ff; stroke-width: 1; }
+    .wm-badge-text { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; font-size: 12px; font-weight: 700; fill: #79c0ff; }
+    .wm-file       { font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace; font-size: 11px; fill: #6e7681; }
     .footer        { font-size: 12px; fill: #6e7681; }
 """
 
 MARKERS = """
-    <!-- ── markers e filtro: copie sempre ─────────────── -->
+    <!-- ── markers, filtro e gradiente da marca d'água: copie sempre ── -->
     <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" class="arrow-head"/>
     </marker>
@@ -112,6 +122,11 @@ MARKERS = """
     <filter id="sombra" x="-10%" y="-10%" width="120%" height="140%">
       <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.45"/>
     </filter>
+    <linearGradient id="marca-acento" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#58a6ff"/>
+      <stop offset="0.5" stop-color="#bc8cff"/>
+      <stop offset="1" stop-color="#bc8cff" stop-opacity="0"/>
+    </linearGradient>
 """
 
 
@@ -329,6 +344,57 @@ def node(x, y, w, h, cls, name, tech, icon=None, gid=None):
     return g + "</g>"
 
 
+# ─────────────────────────── marca d'água ───────────────────────────
+TOPO_H = 112
+
+
+def marca_topo(w, sobretitulo, titulo, subtitulo, versao, data):
+    """Faixa de topo com largura w, em coordenadas locais (0,0): nome à esquerda, carimbo versão/data à direita."""
+    xd = w - 192            # célula DATA
+    xv = xd - 96            # célula VERSÃO
+    return [
+        f'<rect class="wm-band" x="0" y="0" width="{w}" height="{TOPO_H}"/>',
+        f'<rect class="wm-accent" x="0" y="{TOPO_H - 2}" width="{w}" height="2"/>',
+        t(40, 40, sobretitulo, "wm-eyebrow"),
+        t(40, 72, titulo, "title"),
+        t(40, 94, subtitulo, "subtitle"),
+        t(xv, 44, "VERSÃO", "wm-meta-label"),
+        f'<rect class="wm-badge" x="{xv}" y="56" width="48" height="22" rx="11"/>' + t(xv + 24, 71, versao, "wm-badge-text", "middle"),
+        f'<line class="wm-sep" x1="{xd - 24}" y1="32" x2="{xd - 24}" y2="80"/>',
+        t(xd, 44, "DATA", "wm-meta-label"),
+        t(xd, 72, data, "wm-meta-value"),
+    ]
+
+
+def marca_rodape(w, itens, nota, arquivo):
+    """Faixa de rodapé com largura w, em coordenadas locais (0,0). itens: (classe node-*, papel) ou
+    (classe da aresta, marker, significado). Quebra a legenda em linhas de 26px. Devolve (elementos, altura)."""
+    x, y, leg = 40, 58, []
+    for it in itens:
+        iw = (22 if len(it) == 2 else 40) + round(len(it[-1]) * 6.6)
+        if x + iw > w - 40:
+            x, y = 40, y + 26
+        if len(it) == 2:
+            leg.append(f'<rect class="{it[0]}" x="{x}" y="{y - 11}" width="14" height="14" rx="3"/>' + t(x + 22, y, it[1], "label"))
+        else:
+            leg.append(f'<line class="{it[0]}" x1="{x}" y1="{y - 4}" x2="{x + 28}" y2="{y - 4}" marker-end="url(#{it[1]})"/>' + t(x + 40, y, it[2], "label"))
+        x += iw + 28
+    h = y + 58
+    return [
+        f'<rect class="wm-band" x="0" y="0" width="{w}" height="{h}"/>',
+        f'<line class="wm-sep" x1="0" y1="0.5" x2="{w}" y2="0.5"/>',
+        t(40, 30, "LEGENDA", "wm-eyebrow"),
+        *leg,
+        f'<line class="divider" x1="40" y1="{y + 18}" x2="{w - 40}" y2="{y + 18}"/>',
+        t(40, y + 42, esc(nota), "footer"),
+        t(w - 40, y + 42, arquivo, "wm-file", "end"),
+    ], h
+
+
+def indent(els, n=4):
+    return "\n".join(" " * n + e for e in els)
+
+
 # ─────────────────────────── documento ───────────────────────────
 defs_symbols = ""
 for sid, _, body in NEUTRAL:
@@ -341,11 +407,12 @@ for _, _, cells in PROVIDERS:
         sid = "prov-" + path.split("/")[0] + "-" + path.rsplit("/", 1)[1][:-4]
         prov_symbols += embed_icon(path, sid)
 
-add(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}">')
+add('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} __H__" width="{W}" height="__H__">'.replace("{W}", str(W)))
 add('  <title>Tema dos diagramas</title>')
 add('  <desc>Tema dark padrão do boaz e catálogo visual. As skills de diagrama copiam o bloco style e, de defs, os markers e o filtro '
     'sem alterações; dos symbol (#ic-* formas neutras, #uml-* notação, #prov-* ícones oficiais de exemplo) copiam só os que usarem. '
-    'v01: criação. v02: comunicação, formas neutras de arquitetura, provedores e catálogo UML por tipo de diagrama.</desc>')
+    'v01: criação. v02: comunicação, formas neutras de arquitetura, provedores e catálogo UML por tipo de diagrama. '
+    'v03: marca d\'água de topo (nome, versão, data) e de rodapé (legenda, nota da versão, arquivo).</desc>')
 add(f"  <style>{STYLE}  </style>")
 add("  <defs>" + MARKERS)
 add("    <!-- ── formas neutras de arquitetura e notação UML: copie só as usadas ── -->")
@@ -353,17 +420,16 @@ add(defs_symbols.rstrip("\n"))
 add("    <!-- ── ícones oficiais (exemplo de embutir de icones/): copie só os usados ── -->")
 add(prov_symbols.rstrip("\n"))
 add("  </defs>\n")
-add(f'  <rect class="bg" x="0" y="0" width="{W}" height="{H}"/>\n')
+add(f'  <rect class="bg" x="0" y="0" width="{W}" height="__H__"/>\n')
 
 # cabeçalho
-add('  <g id="cabecalho">')
-add("    " + t(40, 56, "Tema dos diagramas", "title"))
-add("    " + t(40, 80, "Referência visual e catálogo do boaz — copie o style e os markers de defs para cada SVG; dos symbol, só os que usar", "subtitle"))
-add(f'    <line class="divider" x1="40" y1="100" x2="{W - 40}" y2="100"/>')
+add('  <g id="marca-topo">')
+add(indent(marca_topo(W, "BOAZ · ESTILO E CATÁLOGO", "Tema dos diagramas",
+                      "Copie o style e, de defs, markers, filtro e gradiente para cada SVG; dos symbol, só os que usar", VERSAO, DATA)))
 add("  </g>\n")
 
 # ── 1. base ──
-y0 = 140
+y0 = 164
 add('  <g id="base">')
 add("    " + section(y0, "1 · CORES POR PAPEL E TIPOGRAFIA"))
 roles = [("node", "Neutro"), ("node-blue", "Projeto"), ("node-green", "Dados"), ("node-purple", "Mensageria"),
@@ -380,7 +446,7 @@ for i, (cls, s) in enumerate(typo):
 add("  </g>\n")
 
 # ── 2. comunicação ──
-y0 = 340
+y0 = 364
 add('  <g id="comunicacao">')
 add("    " + section(y0, "2 · COMUNICAÇÃO", "Cada aresta diz o que trafega e o protocolo, acima da linha: pedidos · HTTPS/JSON"))
 edges = [
@@ -406,7 +472,7 @@ for p in ["HTTPS", "REST", "gRPC", "GraphQL", "WebSocket", "AMQP", "Kafka", "MQT
 add("  </g>\n")
 
 # ── 3. formas neutras ──
-y0 = 556
+y0 = 580
 add('  <g id="formas-neutras">')
 add("    " + section(y0, "3 · FORMAS NEUTRAS DE ARQUITETURA",
                     "symbol #ic-* (24×24, valem para AWS, Azure e GCP) — use com <use href=\"#ic-banco-sql\" width=\"24\" height=\"24\"/> à esquerda do nome".replace("<", "&lt;").replace(">", "&gt;")))
@@ -419,7 +485,7 @@ for i, (sid, name, _) in enumerate(NEUTRAL):
 add("  </g>\n")
 
 # ── 4. exemplo de arquitetura neutra ──
-Y = 952
+Y = 976
 add('  <g id="exemplo-arquitetura">')
 add("    " + section(Y, "4 · EXEMPLO — ARQUITETURA NEUTRA DE PROVEDOR",
                     "Fronteiras aninhadas (conta → rede → sub-rede), ícone à esquerda do nome, cor por papel, fluxo principal em destaque"))
@@ -452,15 +518,11 @@ add(f'    <rect class="edge-label-bg" x="1018" y="{r2 + 12}" width="44" height="
 add(f'    <line class="edge" x1="976" y1="{r2 + 32}" x2="1070" y2="{r2 + 32}" marker-end="url(#seta)"/>' + t(1040, r2 + 24, "HTTPS", "muted", "middle"))
 add(f'    <line class="edge edge-data" x1="876" y1="{r2 + 64}" x2="876" y2="{r3 - 2}" marker-end="url(#seta)"/>')
 add(f'    <rect class="edge-label-bg" x="882" y="{r2 + 108}" width="52" height="16"/>' + t(886, r2 + 120, "anexos", "muted"))
-# legenda
-ly = Y + 384
-add(f'    <rect class="legend-box" x="1072" y="{ly}" width="168" height="168" rx="10"/>' + t(1088, ly + 26, "Legenda", "label-strong"))
-for i, (cls, s) in enumerate([("node-blue", "Projeto"), ("node-green", "Dados"), ("node-purple", "Mensageria"), ("node", "Gerenciado"), ("node-external", "Externo")]):
-    add(f'    <rect class="{cls}" x="1088" y="{ly + 42 + i * 24}" width="14" height="14" rx="3"/>' + t(1112, ly + 54 + i * 24, s, "label"))
+add("    " + t(1072, r3 + 28, "A legenda fica na marca", "muted") + t(1072, r3 + 46, "d'água de rodapé (seção 7)", "muted"))
 add("  </g>\n")
 
 # ── 5. provedores ──
-y0 = 1576
+y0 = 1600
 add('  <g id="provedores">')
 add("    " + section(y0, "5 · COM PROVEDOR FIXADO",
                     "Só quando o pedido nomeia o provedor: troque a forma neutra pelo ícone oficial de icones/&lt;provedor&gt;/ (symbol #prov-*)"))
@@ -487,7 +549,7 @@ add("    " + t(40, y0 + 364, "Rede privada não tem forma: é a fronteira tracej
 add("  </g>\n")
 
 # ── 6. UML ──
-y0 = 1976
+y0 = 2000
 add('  <g id="catalogo-uml">')
 add("    " + section(y0, "6 · CATÁLOGO UML 2.5 — ELEMENTOS POR TIPO DE DIAGRAMA",
                     "dev → 2_Diagramas (diagrama-dev) · arq → 3_Arquitetura (diagrama-arquitetura)"))
@@ -732,13 +794,63 @@ for i, (gid, title, skill, lines, body) in enumerate(cards):
     add(card(i, gid, title, skill, lines, body))
 add("  </g>\n")
 
-fy = H - 72
-add('  <g id="rodape">')
-add(f'    <line class="divider" x1="40" y1="{fy}" x2="{W - 40}" y2="{fy}"/>')
-add("    " + t(40, fy + 28, "tema · v02 · referência de estilo e catálogo", "footer"))
-add("    " + t(40, fy + 48, "Fundo #0d1117 · fonte sans do sistema · cantos 10px · grade de 8px · no máximo 4 cores de papel por diagrama · ícones 24–32px à esquerda do nome", "footer"))
+# ── 7. marca d'água ──
+y0 = 3256
+EW = 880                        # largura do exemplo
+add('  <g id="marca-dagua">')
+add("    " + section(y0, "7 · MARCA D'ÁGUA DE TOPO E RODAPÉ",
+                    "Todo diagrama abre com a marca de topo e fecha com a de rodapé, ambas de largura total, encostadas nas bordas do viewBox"))
+fx, fy0 = 40, y0 + 44
+CONTEUDO_H = 176
+rod, rod_h = marca_rodape(EW, [("node-blue", "Projeto"), ("node-green", "Dados"), ("node-external", "Externo"),
+                                ("edge-accent", "seta-destaque", "fluxo principal"), ("edge", "seta", "síncrono")],
+                          "v02 · adicionada a gravação do pedido no banco", "fluxo-pedido_v02_20261011-1430.svg")
+EH = TOPO_H + CONTEUDO_H + rod_h
+add(f'  <g id="exemplo-marca" transform="translate({fx},{fy0})">')
+add(f'    <clipPath id="exemplo-marca-recorte"><rect x="0" y="0" width="{EW}" height="{EH}" rx="12"/></clipPath>')
+add('    <g clip-path="url(#exemplo-marca-recorte)">')
+add(f'      <rect class="bg" x="0" y="0" width="{EW}" height="{EH}"/>')
+add('      <g id="exemplo-marca-topo">')
+add(indent(marca_topo(EW, "LOJA ONLINE · C4 CONTÊINER", "Fluxo de pedido", "Do clique do cliente até a gravação do pedido",
+                      "v02", "2026-10-11 · 14:30"), 8))
+add("      </g>")
+ny = TOPO_H + (CONTEUDO_H - 64) // 2
+add("      " + node(40, ny, 184, 64, "node-external", "Cliente", "[navegador]", "ic-ator"))
+add("      " + node(348, ny, 184, 64, "node-blue", "Pedidos", "[contêiner]", "ic-conteiner"))
+add("      " + node(656, ny, 184, 64, "node-green", "Banco", "[PostgreSQL]", "ic-banco-sql"))
+add(f'      <line class="edge-accent" x1="224" y1="{ny + 32}" x2="346" y2="{ny + 32}" marker-end="url(#seta-destaque)"/>' + t(285, ny + 24, "HTTPS", "muted", "middle"))
+add(f'      <line class="edge" x1="532" y1="{ny + 32}" x2="654" y2="{ny + 32}" marker-end="url(#seta)"/>' + t(593, ny + 24, "SQL", "muted", "middle"))
+add(f'      <g id="exemplo-marca-rodape" transform="translate(0,{TOPO_H + CONTEUDO_H})">')
+add(indent(rod, 8))
+add("      </g>")
+add("    </g>")
+add(f'    <rect class="wm-frame" x="0.5" y="0.5" width="{EW - 1}" height="{EH - 1}" rx="12"/>')
+# pinos numerados que a anotação ao lado explica
+pinos = [(20, 36), (20, 66), (EW - 306, 61), (20, TOPO_H + CONTEUDO_H + 26), (20, TOPO_H + CONTEUDO_H + rod_h - 20)]
+for n, (px, py) in enumerate(pinos, 1):
+    add(f'    <circle class="node-orange" cx="{px}" cy="{py}" r="9"/>' + t(px, py + 4, n, "chip-text", "middle"))
+add("  </g>")
+notas = [("Sobretítulo", "projeto · tipo de diagrama, em wm-eyebrow"),
+         ("Nome do diagrama", "title + uma linha de contexto em subtitle"),
+         ("Carimbo", "versão em wm-badge · data/hora da versão"),
+         ("Legenda", "só os papéis e arestas que aparecem"),
+         ("Nota e arquivo", "o que mudou nesta versão · nome do .svg")]
+ax = fx + EW + 32
+for n, (titulo, sub) in enumerate(notas, 1):
+    ay = fy0 + 28 + (n - 1) * 72
+    add(f'    <circle class="node-orange" cx="{ax + 9}" cy="{ay - 5}" r="9"/>' + t(ax + 9, ay - 1, n, "chip-text", "middle"))
+    add("    " + t(ax + 28, ay, titulo, "label-strong") + t(ax + 28, ay + 20, sub, "muted"))
+add("  </g>\n")
+
+rod, rod_h = marca_rodape(W, [("node-blue", "Projeto"), ("node-green", "Dados"), ("node-purple", "Mensageria"), ("node-external", "Externo"),
+                              ("edge-accent", "seta-destaque", "fluxo principal"), ("edge edge-async", "seta", "evento")],
+                          f"tema · {VERSAO} · fundo #0d1117 · grade de 8px · cantos 10px · no máximo 4 cores de papel por diagrama · ícones 24–32px à esquerda do nome",
+                          "0_Assets/diagramas/tema.svg")
+H = fy0 + EH + 56 + rod_h
+add(f'  <g id="marca-rodape" transform="translate(0,{H - rod_h})">')
+add(indent(rod))
 add("  </g>")
 add("</svg>")
 
-open(OUT, "w").write("\n".join(out) + "\n")
+open(OUT, "w").write("\n".join(out).replace("__H__", str(H)) + "\n")
 print(OUT, sum(len(s) for s in out), "bytes")
