@@ -10,7 +10,8 @@ CONFIG_FILE=".boaz"
 ICONS_DIR="0_Assets/diagramas/icones"
 ASSETS_TARBALL="https://codeload.github.com/gb-oaz/boaz/tar.gz/refs/heads/main"
 DIAGRAM_DIRS="2_Diagramas 3_Arquitetura"
-LEAF_DIRS="0_Assets/projeto 0_Assets/diagramas 1_Requisitos 2_Diagramas 3_Arquitetura 4_CI_CD
+REQ_DIR="1_Requisitos"
+LEAF_DIRS="0_Assets/projeto 0_Assets/diagramas 0_Assets/requisitos 1_Requisitos 2_Diagramas 3_Arquitetura 4_CI_CD
            5_DEV/backend 5_DEV/frontend 5_DEV/qa/backend 5_DEV/qa/frontend"
 
 # ── TERMINAL ─────────────────────────────────────────────────
@@ -108,8 +109,9 @@ cmd_init() {
 
   create_readmes
   create_requirements_template
-  install_diagram_assets
+  install_assets
   create_diagram_skills
+  create_requirements_skill
 
   # Mantém no git as pastas que ainda estão vazias
   for leaf in $LEAF_DIRS; do
@@ -118,6 +120,7 @@ cmd_init() {
 
   echo ""
   success "Projeto ${C}${PROJECT_NAME}${NC} pronto."
+  info "Requisitos: no Claude Code use ${W}/requisito${NC}."
   info "Diagramas: no Claude Code use ${W}/diagrama-dev${NC} ou ${W}/diagrama-arquitetura${NC}."
 }
 
@@ -129,13 +132,14 @@ Monorepo organizado pelo boaz. Cada pasta tem uma única responsabilidade:
 
 | Pasta | Conteúdo | Formato |
 |---|---|---|
-| \`0_Assets/\` | Recursos reutilizáveis: \`projeto/\` (marca, imagens, fontes) e \`diagramas/\` (tema, ícones, logos) | livre |
-| \`1_Requisitos/\` | O produto desejado — sem backend, frontend ou tecnologia | \`.md\` |
+| \`0_Assets/\` | Recursos reutilizáveis: \`projeto/\` (marca, imagens, fontes), \`requisitos/\` (tema.md) e \`diagramas/\` (tema, ícones, logos) | livre |
+| \`1_Requisitos/\` | O produto desejado — sem backend, frontend ou tecnologia | \`.md\` versionado |
 | \`2_Diagramas/\` | Diagramas de desenvolvimento (backend e frontend) | \`.svg\` versionado |
 | \`3_Arquitetura/\` | Diagramas de alto nível: cloud, tecnologias, integrações | \`.svg\` versionado |
 | \`4_CI_CD/\` | Estruturas de entrega (pipelines, deploy) | livre |
 | \`5_DEV/\` | Código: \`backend/\`, \`frontend/\`, \`qa/backend/\`, \`qa/frontend/\` | livre |
 
+- Requisitos são criados/alterados pela skill \`requisito\`, no padrão de \`0_Assets/requisitos/tema.md\`: cabeçalho com projeto, documento, versão, data/hora e status; histórico no rodapé. \`./boaz.sh requisitos\` lista os documentos.
 - Diagramas são criados/alterados somente pelas skills \`diagrama-dev\` (2_) e \`diagrama-arquitetura\` (3_).
 - Todo diagrama segue o tema dark de \`0_Assets/diagramas/tema.svg\` e embute (inline) os assets que usar de \`0_Assets/\`.
 - Nome do diagrama: \`<legenda>_v<NN>_<AAAAMMDD-HHMM>.svg\`. Versões nunca são sobrescritas; cada alteração gera um novo arquivo.
@@ -150,6 +154,7 @@ Recursos reutilizáveis do projeto e dos diagramas.
 ```
 0_Assets/
 ├── projeto/      # marca, logos, imagens, fontes, mockups — usados no produto e nos documentos
+├── requisitos/   # tema.md: marca d'água, tipografia, formato e blocos dos documentos de requisito
 └── diagramas/    # tema.svg (estilo padrão), ícones de cloud/tecnologias, logos de integrações
 ```
 
@@ -162,6 +167,9 @@ Recursos reutilizáveis do projeto e dos diagramas.
   gerado (o diagrama continua autocontido e renderiza em qualquer lugar).
 - `diagramas/tema.svg` define o visual de todos os diagramas: edite-o para mudar
   cores e tipografia dos próximos diagramas (os antigos não mudam).
+- `requisitos/tema.md` define o padrão dos documentos de `1_Requisitos/` (marca
+  d'água, tipografia, formato e blocos): edite-o para mudar o padrão; cada
+  documento o adota na sua próxima versão.
 EOF
 
   write_once "1_Requisitos/README.md" << 'EOF'
@@ -170,7 +178,11 @@ EOF
 Requisitos do **produto**: o que ele faz, para quem e com quais regras.
 Aqui não se fala de backend, frontend ou tecnologia.
 
-- Arquivos em `.md`.
+- Arquivos `<NN>_<nome>.md`, criados e alterados pela skill `/requisito`.
+- Padrão (marca d'água, tipografia, formato, blocos): `0_Assets/requisitos/tema.md`.
+- Cada documento abre com o cabeçalho (projeto, documento, versão, data/hora, status)
+  e fecha com o histórico. Toda alteração soma 1 na versão.
+- `./boaz.sh requisitos` lista os documentos com versão, data e status.
 - Para ilustrar, referencie um diagrama **com a versão explícita**:
   `![Fluxo de cadastro](../2_Diagramas/fluxo-cadastro_v02_20261010-1430.svg)`
 EOF
@@ -218,46 +230,67 @@ Ambiente de desenvolvimento.
 EOF
 }
 
+# Visão do produto no padrão de 0_Assets/requisitos/tema.md — só se a pasta ainda não tiver documentos
 create_requirements_template() {
-  write_once "1_Requisitos/requisitos.md" << EOF
-# Requisitos — ${PROJECT_NAME}
+  local now
+  ls "$REQ_DIR"/*.md 2>/dev/null | grep -qv '/README\.md$' && return
+  now=$(date '+%Y-%m-%d %H:%M')
+  write_once "$REQ_DIR/00_visao-produto.md" << EOF
+<!-- boaz:marca -->
+| Projeto | Documento | Versão | Data | Status |
+|:---|:---|:---:|:---|:---|
+| ${PROJECT_NAME} | \`00_visao-produto\` | **v01** | ${now} | Rascunho |
 
-> Documento de produto: o que deve existir e por quê. Sem decisões de tecnologia.
+# Visão do produto
 
-## 1. Visão
+> Objetivo: definir o problema que ${PROJECT_NAME} resolve, para quem, e como saberemos que deu certo.
 
-## 2. Usuários / Personas
+## Problema
 
-## 3. Requisitos funcionais
+<!-- até 5 linhas: a dor, quem a sente e o que acontece hoje -->
 
-| ID | Requisito | Prioridade |
-|---|---|---|
-| RF-01 | | |
+## Objetivos e métricas
 
-## 4. Requisitos não funcionais
+| Objetivo | Métrica | Meta |
+|:---|:---|:---|
+| | | |
 
-| ID | Requisito |
-|---|---|
-| RNF-01 | |
+## Personas
 
-## 5. Regras de negócio
+| Persona | Quem é | Precisa de |
+|:---|:---|:---|
+| | | |
 
-## 6. Fora de escopo
+## Escopo
 
-## 7. Diagramas
+-
 
-<!-- Referencie sempre com a versão explícita, ex.:
-![Fluxo de cadastro](../2_Diagramas/fluxo-cadastro_v01_20261010-1430.svg)
--->
+## Fora de escopo
+
+-
+
+## Em aberto
+
+- [ ]
+
+---
+
+<!-- boaz:historico -->
+| Versão | Data | Mudança |
+|:---:|:---|:---|
+| v01 | ${now} | Criação (modelo do boaz) |
+
+<sub>${PROJECT_NAME} · ${REQ_DIR}/00_visao-produto.md · v01 · ${now}</sub>
 EOF
 }
 
-# ── ASSETS DOS DIAGRAMAS ─────────────────────────────────────
-# Copia de assets/ do boaz, sem sobrescrever (o projeto pode customizar o tema e adicionar ícones):
+# ── ASSETS ───────────────────────────────────────────────────
+# Copia de assets/ do boaz, sem sobrescrever (o projeto pode customizar os temas e adicionar ícones):
+#   tema.md   → 0_Assets/requisitos/tema.md   (padrão dos documentos de requisito)
 #   tema.svg  → 0_Assets/diagramas/tema.svg   (estilo + catálogo de formas e notação)
 #   icones/   → 0_Assets/diagramas/icones/
 # Usa a cópia local (clone do boaz) se existir; senão baixa do GitHub.
-install_diagram_assets() {
+install_assets() {
   local src tmp="" n
   src="$(cd "$(dirname "$0")" && pwd)/assets"
   if [ ! -f "$src/tema.svg" ]; then
@@ -270,10 +303,11 @@ install_diagram_assets() {
     src="$tmp/boaz-main/assets"
   fi
   if [ ! -f "$src/tema.svg" ]; then
-    warn "Tema e ícones dos diagramas não baixados (sem rede?) — rode ./boaz.sh init de novo depois."
+    warn "Temas e ícones não baixados (sem rede?) — rode ./boaz.sh init de novo depois."
     [ -z "$tmp" ] || rm -rf "$tmp"
     return
   fi
+  [ ! -f "$src/tema.md" ] || write_once "0_Assets/requisitos/tema.md" < "$src/tema.md"
   write_once "0_Assets/diagramas/tema.svg" < "$src/tema.svg"
   # cp -Rn: copia a árvore de uma vez, sem sobrescrever (|| true: alguns cp saem com 1 ao pular arquivos)
   mkdir -p "$ICONS_DIR"
@@ -341,7 +375,7 @@ Se o `boaz.sh` não estiver disponível, calcule pela regra acima.
 1. Identifique a legenda e abra a **maior versão** (`ls __PASTA__/<legenda>_v*`).
 2. Aplique só a mudança pedida, preservando layout, ids e o restante do desenho.
 3. Salve como a próxima versão (`./boaz.sh svg __PASTA__ <legenda>`).
-4. Rode `grep -rn "<legenda>_v" 1_Requisitos` e, se houver referências à versão anterior, pergunte se devem apontar para a nova. Não altere sem confirmação.
+4. Rode `grep -rn "<legenda>_v" 1_Requisitos` e, se houver referências à versão anterior, pergunte se devem apontar para a nova. Não altere sem confirmação; confirmado, cada documento alterado ganha uma versão nova (cabeçalho e histórico, como na skill `requisito`).
 
 ## Assets (`0_Assets/`)
 
@@ -556,6 +590,68 @@ EOF
   } | write_always ".claude/skills/diagrama-arquitetura/SKILL.md"
 }
 
+# ── SKILL DE REQUISITOS ──────────────────────────────────────
+create_requirements_skill() {
+  write_always ".claude/skills/requisito/SKILL.md" << 'EOF'
+---
+name: requisito
+description: Cria, altera ou revisa documentos de requisito do produto (.md) em 1_Requisitos/ — visão do produto, funcionalidades, requisitos transversais e glossário — no padrão de 0_Assets/requisitos/tema.md, com cabeçalho de marca d'água (projeto, documento, versão, data/hora, status) e histórico. Use para escrever requisitos funcionais, não funcionais, regras de negócio, critérios de aceite, personas ou glossário, ou para alterar, revisar ou mudar o status de um documento dessa pasta.
+---
+
+# Documento de requisito → `1_Requisitos/`
+
+Você é analista de produto. A saída é **sempre um `.md` em `1_Requisitos/`**, curto e claro, no padrão de `0_Assets/requisitos/tema.md`.
+
+## Escopo
+
+Pertence aqui **o produto**: o que ele faz, para quem, com quais regras e limites mensuráveis.
+
+Não pertence: backend, frontend, banco, API, framework, provedor ou qualquer decisão de solução. Se o pedido trouxer tecnologia, reescreva como comportamento e avise. Diagramas são das skills `diagrama-dev` (`2_Diagramas/`) e `diagrama-arquitetura` (`3_Arquitetura/`); sugira-as quando um fluxo ficar mais claro desenhado.
+
+## O padrão
+
+`0_Assets/requisitos/tema.md` é a fonte da verdade: marca d'água, tipografia, formato, escrita, catálogo de blocos, tipos de documento e versionamento. **Leia-o inteiro antes de escrever** e siga-o mesmo quando divergir deste resumo (o projeto pode tê-lo customizado). Se não existir, rode `./boaz.sh init`.
+
+Resumo do que não pode faltar:
+- Cabeçalho na primeira linha: `<!-- boaz:marca -->` + tabela `Projeto | Documento | Versão | Data | Status` (projeto = `PROJECT_NAME` de `.boaz`; data = `date '+%Y-%m-%d %H:%M'`).
+- `# Título`, `> Objetivo: <uma frase>` e só as seções do tipo, na ordem do tema; seção opcional vazia é removida.
+- Rodapé: `---`, `<!-- boaz:historico -->` + tabela `Versão | Data | Mudança` (mais nova no topo, até 10 linhas) e a linha `<sub>projeto · caminho · vNN · data</sub>`.
+- Requisitos em tabela com ID em código (`RF-01`, `RNF-01`, `RN-01`), uma obrigação por frase, "O sistema deve …", prioridade MoSCoW, critério de aceite em Gherkin para cada `Deve`.
+- Curto: ≤ 150 linhas sem o rodapé, ≤ 12 requisitos funcionais, uma funcionalidade por documento — passou, divida.
+
+## Fluxo
+
+**Antes de escrever**
+1. Leia o tema, rode `./boaz.sh requisitos` e leia `00_visao-produto.md` e `99_glossario.md` se existirem — reaproveite nomes de personas e termos.
+2. Próximos IDs (únicos no projeto inteiro, nunca reaproveitados):
+   `for p in RF RNF RN; do grep -rhoE "\b$p-[0-9]+" 1_Requisitos | sort -t- -k2,2n | tail -1; done`
+
+**Documento novo**
+1. Escolha o tipo pelo tema (visão, funcionalidade, transversal, glossário) e o arquivo `<NN>_<nome>.md`: `NN` = próximo livre da faixa do tipo (`ls 1_Requisitos`), `nome` em kebab-case sem acentos.
+2. Se uma ambiguidade mudar o escopo, faça no máximo 1–2 perguntas. O resto **não invente**: regra, limite ou número que o pedido não deu vira item de **Em aberto**.
+3. Escreva com `v01`, status `Rascunho` e histórico `v01 · Criação`.
+
+**Alteração** ("muda", "adiciona", "remove", "aprova" num documento existente)
+1. Abra o documento e aplique só o que foi pedido; não reescreva o resto nem renomeie o arquivo.
+2. Nova versão: `vNN` + 1 e data/hora atuais no cabeçalho, linha no topo do histórico dizendo o que mudou (cite os IDs) e `<sub>` atualizado. Mudança de status também é versão.
+3. Requisito removido sai da tabela (e dos critérios); o ID não é reutilizado. Pendência respondida sai de Em aberto e vira requisito/regra.
+4. Se o documento estava `Aprovado`, volte-o para `Em revisão`, a menos que o pedido diga outra coisa.
+5. Termo novo do domínio? Proponha incluí-lo em `99_glossario.md` (que também ganha versão).
+
+**Revisão** (sempre, antes de entregar)
+- Cabeçalho, primeira linha do histórico e `<sub>`: mesma versão e mesma data/hora.
+- Um `#`, seções na ordem do tema, nenhuma vazia, `###` só em Critérios de aceite.
+- IDs duplicados: `grep -rhoE '^\| `(RF|RNF|RN)-[0-9]+`' 1_Requisitos | sort | uniq -d` (deve sair vazio).
+- Palavras vagas: `grep -niE 'rápid|fácil|intuitiv|amigável|simples|adequad|eficiente|robust|flexível|etc\.|e/ou|entre outros|se possível|geralmente|normalmente|TBD|a definir' <arquivo>` — troque cada uma por critério verificável.
+- Tecnologia: `grep -niE 'backend|frontend|banco de dados|\bAPI\b|endpoint|framework|servidor|\bSQL\b|cloud' <arquivo>` — reescreva como comportamento.
+- Tamanho: `wc -l` dentro do limite; diagramas referenciados existem (`ls`).
+
+## Resposta
+
+Responda curto: caminho do arquivo, versão e status, o que mudou (IDs), e as pendências de **Em aberto** que precisam de alguém para responder.
+EOF
+}
+
 # ── DIAGRAMAS ────────────────────────────────────────────────
 check_diagram_dir() {
   case " $DIAGRAM_DIRS " in
@@ -604,6 +700,29 @@ cmd_diagramas() {
   done
 }
 
+# ── REQUISITOS ───────────────────────────────────────────────
+# Lista os documentos de 1_Requisitos com versão, data e status lidos do cabeçalho
+cmd_requisitos() {
+  title "$REQ_DIR"
+  [ -d "$REQ_DIR" ] || fail "Pasta não existe — rode ./boaz.sh init"
+  local f row n=0
+  for f in "$REQ_DIR"/*.md; do
+    [ -e "$f" ] || continue
+    [ "$(basename "$f")" != "README.md" ] || continue
+    n=$((n + 1))
+    # 3ª linha após <!-- boaz:marca -->: | projeto | documento | versão | data | status |
+    row=$(awk '/<!-- boaz:marca/ { m = NR } m && NR == m + 3 { print; exit }' "$f")
+    if [ -z "$row" ]; then
+      echo "  ${Y}●${NC} $(basename "$f")  ${D}(sem cabeçalho boaz)${NC}"
+      continue
+    fi
+    echo "$row" | tr -d '`*' | awk -F'|' -v f="$(basename "$f")" -v g="$G" -v d="$D" -v nc="$NC" '
+      function t(s) { gsub(/^[ \t]+|[ \t]+$/, "", s); return s }
+      { printf "  %s●%s %-36s %-5s %s%s · %s%s\n", g, nc, f, t($4), d, t($5), t($6), nc }'
+  done
+  [ "$n" -gt 0 ] || info "Nenhum documento ainda."
+}
+
 # ── STATUS ───────────────────────────────────────────────────
 cmd_status() {
   load_config
@@ -625,8 +744,9 @@ cmd_help() {
 
   ${W}Uso:${NC} ./boaz.sh [comando]
 
-  ${C}init [nome]${NC}               Monta/completa a estrutura e (re)gera as skills de diagrama
+  ${C}init [nome]${NC}               Monta/completa a estrutura e (re)gera as skills
   ${C}status${NC}                    Mostra as pastas do projeto
+  ${C}requisitos${NC}                Lista os documentos de requisito com versão, data e status
   ${C}diagramas${NC}                 Lista a versão mais recente de cada diagrama
   ${C}svg <pasta> <legenda>${NC}     Imprime o próximo nome versionado de um diagrama
                             ex.: ./boaz.sh svg 2_Diagramas "Fluxo de cadastro"
@@ -648,6 +768,7 @@ case "$cmd" in
     ;;
   init)      banner; cmd_init "$@" ;;
   status)    cmd_status ;;
+  requisitos) cmd_requisitos ;;
   diagramas) cmd_diagramas ;;
   svg)       cmd_svg "$@" ;;
   help|-h|--help) cmd_help ;;

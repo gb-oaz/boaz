@@ -18,7 +18,7 @@
 
 O `boaz` monta a estrutura de pastas de um projeto seguindo uma metodologia simples, **sem escolher tecnologia**: do requisito do produto até o código, cada etapa tem a sua pasta.
 
-Também instala dois prompts especializados (skills do Claude Code) que desenham diagramas e **sempre** entregam um `.svg` versionado — pronto para ser referenciado nos requisitos.
+Também instala três prompts especializados (skills do Claude Code): um escreve os **documentos de requisito** num padrão único, e dois desenham diagramas que **sempre** entregam um `.svg` versionado — pronto para ser referenciado nos requisitos.
 
 ---
 
@@ -30,12 +30,13 @@ chmod +x boaz.sh
 ./boaz.sh init "Nome do Projeto"
 ```
 
-O nome fica salvo em `.boaz`. Rodar `./boaz.sh init` de novo só cria o que estiver faltando (nunca sobrescreve seus arquivos) e atualiza as skills de diagrama.
+O nome fica salvo em `.boaz`. Rodar `./boaz.sh init` de novo só cria o que estiver faltando (nunca sobrescreve seus arquivos) e atualiza as skills.
 
 | Comando | O que faz |
 |---|---|
 | `./boaz.sh init [nome]` | Monta/completa a estrutura e (re)gera as skills |
 | `./boaz.sh status` | Mostra as pastas e quantos arquivos cada uma tem |
+| `./boaz.sh requisitos` | Lista os documentos de requisito com versão, data e status |
 | `./boaz.sh diagramas` | Lista a versão mais recente de cada diagrama |
 | `./boaz.sh svg <pasta> <legenda>` | Imprime o próximo nome versionado de um diagrama |
 
@@ -47,6 +48,7 @@ O nome fica salvo em `.boaz`. Rodar `./boaz.sh init` de novo só cria o que esti
 projeto/
 ├── 0_Assets/
 │   ├── projeto/         # Marca, logos, imagens, fontes
+│   ├── requisitos/      # tema.md (padrão e catálogo dos documentos de requisito)
 │   └── diagramas/       # tema.svg (estilo + catálogo visual), ícones de tecnologias
 │       └── icones/      # ícones oficiais AWS, GCP e Azure (.svg), instalados pelo init
 ├── 1_Requisitos/        # O produto desejado (.md) — sem backend, frontend ou tecnologia
@@ -60,11 +62,48 @@ projeto/
 │       ├── backend/
 │       └── frontend/
 ├── .claude/skills/
+│   ├── requisito/             # prompt especializado → 1_Requisitos
 │   ├── diagrama-dev/          # prompt especializado → 2_Diagramas
 │   └── diagrama-arquitetura/  # prompt especializado → 3_Arquitetura
 ├── CLAUDE.md            # Resumo da metodologia para o Claude Code
 └── .boaz                # Nome do projeto
 ```
+
+---
+
+## Documentos de requisito
+
+No Claude Code, peça o documento pela skill:
+
+```
+/requisito funcionalidade de cadastro de usuário com confirmação por e-mail
+/requisito no 02_cadastro-usuario, adicione limite de 5 tentativas de login
+/requisito aprove o 00_visao-produto
+```
+
+Todos os documentos seguem o padrão de [`assets/tema.md`](assets/tema.md), instalado em `0_Assets/requisitos/tema.md`. Ele é, ao mesmo tempo, a regra e o **catálogo** do que um documento pode usar:
+
+1. **marca d'água** — cabeçalho com projeto, documento, versão, data/hora e status; rodapé com o histórico de versões;
+2. **tipografia** — o que cada marcação significa (`#` só o título, IDs sempre em código, negrito só para termo do glossário…);
+3. **formato** — nome `<NN>_<nome>.md`, esqueleto fixo de seções e limites de tamanho (≤ 150 linhas, ≤ 12 requisitos por documento);
+4. **escrita** — "O sistema deve…", uma obrigação por frase, requisito não funcional sempre mensurável, lista de palavras vagas proibidas;
+5. **catálogo de blocos** — requisitos funcionais e não funcionais, regras de negócio, prioridade MoSCoW, critérios de aceite em Gherkin, personas, métricas, em aberto, glossário, destaques;
+6. **tipos de documento** — visão do produto (`00`), funcionalidade (`01`–`89`), transversal (`90`–`98`) e glossário (`99`).
+
+```markdown
+<!-- boaz:marca -->
+| Projeto | Documento | Versão | Data | Status |
+|:---|:---|:---:|:---|:---|
+| Loja X | `02_cadastro-usuario` | **v03** | 2026-10-11 14:30 | Em revisão |
+
+# Cadastro de usuário
+
+> Objetivo: definir como uma pessoa cria a conta e prova que o e-mail é dela.
+```
+
+Diferente dos diagramas, o documento é **editado no lugar** (os links continuam válidos e o git guarda o conteúdo antigo): cada alteração soma 1 na versão, atualiza data/hora e ganha uma linha no histórico. IDs (`RF-01`, `RNF-01`, `RN-01`) são únicos no projeto e nunca reaproveitados. O que o pedido não define não é inventado — vai para a seção **Em aberto**.
+
+Edite o tema do projeto para mudar o padrão; cada documento o adota na próxima versão.
 
 ---
 
@@ -139,7 +178,7 @@ As skills conhecem os 14 diagramas da UML 2.5 e escolhem o tipo pela pergunta, q
 
 - `bash` 3.2+
 - `curl` ou `wget`
-- [Claude Code](https://claude.com/claude-code) para as skills de diagrama
+- [Claude Code](https://claude.com/claude-code) para as skills
 
 ---
 
