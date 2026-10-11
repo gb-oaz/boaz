@@ -1,0 +1,1254 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tema dos documentos de requisito · boaz · v01</title>
+<!-- boaz:marca — metadados lidos pelo ./boaz.sh (um por linha, nesta ordem) -->
+<meta name="boaz:projeto" content="boaz">
+<meta name="boaz:documento" content="tema">
+<meta name="boaz:caminho" content="0_Assets/requisitos/tema.html">
+<meta name="boaz:tipo" content="Tema">
+<meta name="boaz:versao" content="v01">
+<meta name="boaz:data" content="2026-10-11 15:00">
+<meta name="boaz:status" content="Aprovado">
+<!-- boaz:casca:inicio — copie este bloco sem alterar para o <head> de todo documento -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..800;1,14..32,400..800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap">
+<style id="boaz-tema">
+/* ════════════════════════════════════════════════════════════
+   boaz · tema dos documentos de requisito · v01
+   Paleta do tema.svg (dark) com a variante light equivalente.
+   Temas: claro · sistema · escuro (botões no canto) · impressão sempre clara.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── tokens: claro ───────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --canvas: #eceff3;
+  --page: #ffffff;
+  --band: #f6f8fa;
+  --surface: #f6f8fa;
+  --surface-2: #eef1f4;
+  --border: #d1d9e0;
+  --border-soft: #e4e8ec;
+  --text: #1f2328;
+  --text-strong: #0d1117;
+  --muted: #59636e;
+  --faint: #818b98;
+  --accent: #0969da;
+  --accent-ink: #0550ae;
+  --accent-soft: #ddf4ff;
+  --accent-2: #8250df;
+  --accent-2-soft: #fbefff;
+  --green: #1a7f37;   --green-soft: #dafbe1;
+  --orange: #bc4c00;  --orange-soft: #fff1e5;
+  --red: #cf222e;     --red-soft: #ffebe9;
+  --yellow: #9a6700;  --yellow-soft: #fff8c5;
+  --shadow: 0 1px 2px rgba(31, 35, 40, .06), 0 12px 32px rgba(31, 35, 40, .10);
+  --marca-dagua: rgba(9, 105, 218, .055);
+  --font: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ── tokens: escuro (o mesmo do tema.svg) ────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --canvas: #010409;
+    --page: #0d1117;
+    --band: #11161e;
+    --surface: #161b22;
+    --surface-2: #1c2128;
+    --border: #30363d;
+    --border-soft: #21262d;
+    --text: #e6edf3;
+    --text-strong: #f0f6fc;
+    --muted: #8b949e;
+    --faint: #6e7681;
+    --accent: #58a6ff;
+    --accent-ink: #79c0ff;
+    --accent-soft: #0c2d4a;
+    --accent-2: #bc8cff;
+    --accent-2-soft: #271a45;
+    --green: #3fb950;   --green-soft: #0f2e1b;
+    --orange: #f0883e;  --orange-soft: #3a2410;
+    --red: #f85149;     --red-soft: #3b1219;
+    --yellow: #d29922;  --yellow-soft: #2b2311;
+    --shadow: 0 0 0 1px #21262d, 0 16px 40px rgba(0, 0, 0, .55);
+    --marca-dagua: rgba(88, 166, 255, .05);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #010409;
+  --page: #0d1117;
+  --band: #11161e;
+  --surface: #161b22;
+  --surface-2: #1c2128;
+  --border: #30363d;
+  --border-soft: #21262d;
+  --text: #e6edf3;
+  --text-strong: #f0f6fc;
+  --muted: #8b949e;
+  --faint: #6e7681;
+  --accent: #58a6ff;
+  --accent-ink: #79c0ff;
+  --accent-soft: #0c2d4a;
+  --accent-2: #bc8cff;
+  --accent-2-soft: #271a45;
+  --green: #3fb950;   --green-soft: #0f2e1b;
+  --orange: #f0883e;  --orange-soft: #3a2410;
+  --red: #f85149;     --red-soft: #3b1219;
+  --yellow: #d29922;  --yellow-soft: #2b2311;
+  --shadow: 0 0 0 1px #21262d, 0 16px 40px rgba(0, 0, 0, .55);
+  --marca-dagua: rgba(88, 166, 255, .05);
+}
+
+/* ── base ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  background: var(--canvas);
+  -webkit-text-size-adjust: 100%;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+body {
+  max-width: 920px;
+  margin: 56px auto 96px;
+  background: var(--page);
+  color: var(--text);
+  font: 400 15.5px/1.68 var(--font);
+  font-optical-sizing: auto;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: clip;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--accent-soft); color: var(--text-strong); }
+main { padding: 8px 56px 56px; }
+
+h1, h2, h3 { color: var(--text-strong); text-wrap: balance; }
+h2 {
+  margin: 56px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -.012em;
+  scroll-margin-top: 24px;
+}
+h3 {
+  margin: 28px 0 10px;
+  font-size: 1.04rem;
+  font-weight: 650;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  scroll-margin-top: 24px;
+}
+p { margin: 0 0 14px; text-wrap: pretty; }
+a { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--accent); }
+strong, b { font-weight: 650; color: var(--text-strong); }
+em { font-style: italic; }
+ul, ol { margin: 0 0 16px; padding-left: 22px; }
+li { margin: 4px 0; }
+li::marker { color: var(--faint); }
+hr { border: 0; border-top: 1px solid var(--border-soft); margin: 32px 0; }
+
+/* código, IDs, nomes de arquivo, valores literais */
+code, kbd, samp, pre { font-family: var(--mono); font-size: .86em; font-variant-ligatures: none; }
+code {
+  padding: .12em .42em;
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text-strong);
+  white-space: nowrap;
+}
+code.id {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+pre {
+  margin: 0 0 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.65;
+  overflow-x: auto;
+  tab-size: 2;
+}
+pre code { padding: 0; background: none; font-size: inherit; white-space: pre; }
+
+/* texto exibido ao usuário, exatamente como aparece */
+q.ui { quotes: "“" "”"; font-family: var(--mono); font-size: .9em; color: var(--text-strong); }
+
+/* ── marca d'água · topo ─────────────────────────────────── */
+.boaz-marca-topo {
+  position: relative;
+  padding: 44px 56px 0;
+  background: var(--band);
+  border-bottom: 1px solid var(--border-soft);
+}
+.boaz-marca-topo::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2) 50%, transparent);
+}
+.boaz-eyebrow {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.boaz-marca-topo h1 {
+  margin: 0 0 12px;
+  font-size: 2.15rem;
+  font-weight: 760;
+  line-height: 1.15;
+  letter-spacing: -.024em;
+}
+.boaz-objetivo {
+  max-width: 64ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.04rem;
+  line-height: 1.6;
+}
+.boaz-objetivo > span:first-child {
+  margin-right: 8px;
+  color: var(--faint);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.boaz-carimbo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  margin: 32px -56px 0;
+  padding: 0;
+  border-top: 1px solid var(--border-soft);
+}
+.boaz-carimbo > div { padding: 14px 24px 16px; border-left: 1px solid var(--border-soft); min-width: 0; }
+.boaz-carimbo > div:first-child { padding-left: 56px; border-left: 0; }
+.boaz-carimbo > div:last-child { padding-right: 56px; }
+.boaz-carimbo dt {
+  margin-bottom: 6px;
+  color: var(--faint);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.boaz-carimbo dd { margin: 0; color: var(--text-strong); font-family: var(--mono); font-size: 13px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.boaz-versao {
+  display: inline-block;
+  padding: 0 10px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+/* status do documento */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px 0 9px;
+  border-radius: 999px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 22px;
+  white-space: nowrap;
+}
+.status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.status-rascunho   { background: var(--yellow-soft); color: var(--yellow); }
+.status-em-revisao { background: var(--accent-2-soft); color: var(--accent-2); }
+.status-aprovado   { background: var(--green-soft); color: var(--green); }
+.status-obsoleto   { background: var(--red-soft); color: var(--red); text-decoration: line-through; }
+
+/* ── marca d'água · rodapé ───────────────────────────────── */
+.boaz-marca-rodape {
+  padding: 32px 56px 28px;
+  background: var(--band);
+  border-top: 1px solid var(--border-soft);
+}
+.boaz-marca-rodape table { margin-bottom: 20px; font-size: 13px; }
+.boaz-marca-rodape td:nth-child(2) { color: var(--muted); font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+.boaz-rodape-linha {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+  color: var(--faint);
+  font-size: 12px;
+}
+.boaz-arquivo { font-family: var(--mono); font-size: 11.5px; }
+
+/* marca d'água diagonal: só para Rascunho, Em revisão e Obsoleto (o script lê o status) */
+body[data-marca]::after {
+  content: attr(data-marca);
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--marca-dagua);
+  font: 800 clamp(64px, 13vw, 150px)/1 var(--font);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transform: rotate(-28deg);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── sumário ─────────────────────────────────────────────── */
+.sumario {
+  margin: 36px 0 8px;
+  padding: 18px 22px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.sumario > p { margin: 0 0 8px; }
+.sumario ol { columns: 2; column-gap: 32px; margin: 0; padding-left: 20px; font-size: 14px; }
+.sumario li { break-inside: avoid; }
+.sumario a { color: var(--text); text-decoration: none; }
+.sumario a:hover { color: var(--accent); }
+
+/* ── tabelas ─────────────────────────────────────────────── */
+table {
+  width: 100%;
+  margin: 0 0 20px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 14.5px;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+}
+th {
+  padding: 9px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+td { padding: 11px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+tr:last-child > td { border-bottom: 0; }
+tbody tr:target > td { background: var(--accent-soft); }
+td:has(> code.id:only-child), td:has(> .prio:only-child), td:has(> .tag:only-child) { width: 1%; white-space: nowrap; }
+td code:not(.id) { white-space: normal; }
+caption { caption-side: top; padding: 0 0 8px; color: var(--muted); font-size: 13px; text-align: left; }
+
+/* prioridade MoSCoW */
+.prio {
+  display: inline-block;
+  padding: 0 9px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 22px;
+  white-space: nowrap;
+}
+.prio-deve      { background: var(--accent); color: var(--page); }
+.prio-deveria   { background: var(--accent-2-soft); color: var(--accent-2); }
+.prio-poderia   { background: var(--surface-2); color: var(--muted); }
+.prio-nao-agora { border: 1px dashed var(--border); color: var(--faint); line-height: 20px; }
+
+/* etiqueta neutra (categoria de RNF, responsável…) */
+.tag {
+  display: inline-block;
+  padding: 0 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 21px;
+  white-space: nowrap;
+}
+
+/* ── história de usuário ─────────────────────────────────── */
+.historia {
+  margin: 0 0 12px;
+  padding: 10px 0 10px 18px;
+  border-left: 3px solid var(--accent-2);
+  font-size: 1.02rem;
+}
+.historia > span { color: var(--accent-2); font-size: .74em; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+
+/* ── critérios de aceite (Gherkin) ───────────────────────── */
+.criterio { margin: 0 0 24px; break-inside: avoid; }
+.criterio h3 { margin-top: 24px; }
+pre.gherkin { position: relative; padding-top: 30px; background: var(--surface); }
+pre.gherkin::before {
+  content: "GHERKIN";
+  position: absolute;
+  top: 9px; right: 14px;
+  color: var(--faint);
+  font: 700 9.5px/1 var(--font);
+  letter-spacing: .14em;
+}
+pre.gherkin .g-cenario { color: var(--accent-2); font-weight: 700; }
+pre.gherkin .g-passo   { color: var(--accent); font-weight: 700; }
+pre.gherkin .g-texto   { color: var(--green); }
+
+/* ── personas ────────────────────────────────────────────── */
+.personas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin: 0 0 20px; }
+.persona {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 4px 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--surface);
+  break-inside: avoid;
+}
+.persona::before {
+  content: attr(data-inicial);
+  grid-row: span 3;
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-weight: 700;
+  font-size: 17px;
+}
+.persona h3 { margin: 0; font-size: 1rem; }
+.persona p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.persona p > span { color: var(--faint); font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-right: 6px; }
+
+/* ── objetivos e métricas ────────────────────────────────── */
+.metricas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin: 0 0 20px; }
+.metrica {
+  padding: 18px 20px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--surface);
+  break-inside: avoid;
+}
+.metrica h3 { margin: 0 0 4px; font-size: .98rem; }
+.metrica .meta { margin: 10px 0 2px; color: var(--accent); font-family: var(--mono); font-size: 1.7rem; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.metrica p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+
+/* ── escopo, fora de escopo, pendências ──────────────────── */
+ul.escopo, ul.fora, ul.pendencias { list-style: none; padding: 0; }
+ul.escopo > li, ul.fora > li, ul.pendencias > li { position: relative; padding-left: 28px; margin: 7px 0; }
+ul.escopo > li::before, ul.fora > li::before {
+  position: absolute; left: 0; top: .2em;
+  display: grid; place-items: center;
+  width: 18px; height: 18px;
+  border-radius: 5px;
+  font-size: 11px; font-weight: 800; line-height: 1;
+}
+ul.escopo > li::before { content: "✓"; background: var(--green-soft); color: var(--green); }
+ul.fora > li::before { content: "✕"; background: var(--surface-2); color: var(--faint); }
+ul.fora > li { color: var(--muted); }
+ul.pendencias > li {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+  padding: 10px 14px 10px 42px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--surface);
+}
+ul.pendencias > li::before {
+  content: "";
+  position: absolute; left: 14px; top: 13px;
+  width: 15px; height: 15px;
+  border: 1.5px solid var(--yellow);
+  border-radius: 4px;
+}
+ul.pendencias .dono { flex: none; }
+
+/* ── destaques (no máximo 2 por documento) ───────────────── */
+.destaque {
+  --cor: var(--accent); --fundo: var(--accent-soft);
+  margin: 0 0 18px;
+  padding: 14px 18px 14px 18px;
+  border: 1px solid color-mix(in srgb, var(--cor) 35%, transparent);
+  border-left: 4px solid var(--cor);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--fundo) 70%, var(--page));
+  break-inside: avoid;
+}
+.destaque > :last-child { margin-bottom: 0; }
+.destaque::before {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--cor);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.destaque.nota::before       { content: "ⓘ  Nota"; }
+.destaque.importante         { --cor: var(--accent-2); --fundo: var(--accent-2-soft); }
+.destaque.importante::before { content: "◆  Importante"; }
+.destaque.aviso              { --cor: var(--orange); --fundo: var(--orange-soft); }
+.destaque.aviso::before      { content: "▲  Aviso"; }
+
+/* ── diagramas (.svg de 2_Diagramas e 3_Arquitetura) ─────── */
+figure.diagrama {
+  margin: 0 0 24px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: #0d1117; /* os diagramas são dark: a moldura acompanha em qualquer tema */
+  overflow: hidden;
+  break-inside: avoid;
+}
+figure.diagrama > a { display: block; }
+figure.diagrama img { display: block; width: 100%; height: auto; }
+figure.diagrama.recorte > a { aspect-ratio: var(--recorte-proporcao); overflow: hidden; }
+figure.diagrama.recorte img { margin-top: calc(-1 * var(--recorte-y)); }
+figure.diagrama figcaption {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px;
+  padding: 12px 18px;
+  background: var(--page);
+  border-top: 1px solid var(--border-soft);
+  font-size: 14px;
+}
+figure.diagrama figcaption code { font-size: 11.5px; color: var(--muted); background: none; padding: 0; }
+
+/* ── referência a outro documento ────────────────────────── */
+a.ref { font-weight: 550; text-decoration: none; white-space: nowrap; }
+a.ref::after { content: " ↗"; font-size: .85em; }
+a.ref code.id { margin-left: 2px; }
+
+/* ── glossário ───────────────────────────────────────────── */
+dl.glossario {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) 1fr;
+  margin: 0 0 20px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  overflow: hidden;
+}
+dl.glossario > dt, dl.glossario > dd { margin: 0; padding: 11px 16px; border-bottom: 1px solid var(--border-soft); }
+dl.glossario > dt { background: var(--surface); color: var(--text-strong); font-weight: 650; }
+dl.glossario > dd { color: var(--muted); }
+dl.glossario > :nth-last-child(-n + 2) { border-bottom: 0; }
+
+/* ── barra: tema e PDF (criada pelo script; some na impressão) ── */
+.boaz-barra {
+  position: fixed;
+  top: 16px; right: 16px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--page) 86%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+  font: 600 12.5px/1 var(--font);
+}
+.boaz-seg { display: flex; gap: 2px; padding: 2px; border-radius: 8px; background: var(--surface-2); }
+.boaz-barra button {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 30px; padding: 0 9px;
+  border: 0; border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+.boaz-barra button:hover { color: var(--text-strong); }
+.boaz-barra button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.boaz-seg button[aria-pressed="true"] { background: var(--page); color: var(--text-strong); box-shadow: 0 1px 3px rgba(0, 0, 0, .15); }
+.boaz-barra svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.boaz-barra .boaz-pdf { padding: 0 12px; background: var(--accent); color: #fff; }
+.boaz-barra .boaz-pdf:hover { color: #fff; filter: brightness(1.08); }
+.boaz-barra[data-alerta] .boaz-pdf { background: var(--red); }
+
+/* ── telas estreitas ─────────────────────────────────────── */
+@media screen and (max-width: 760px) {
+  body { margin: 0; border-radius: 0; box-shadow: none; font-size: 15px; }
+  main { padding: 0 16px 40px; }
+  .boaz-marca-topo { padding: 72px 16px 0; }
+  .boaz-marca-topo h1 { font-size: 1.7rem; }
+  .boaz-carimbo { grid-template-columns: 1fr 1fr; margin: 24px -16px 0; }
+  .boaz-carimbo > div, .boaz-carimbo > div:first-child, .boaz-carimbo > div:last-child { padding: 12px 16px; border-left: 0; border-top: 1px solid var(--border-soft); }
+  .boaz-carimbo > div:nth-child(even) { border-left: 1px solid var(--border-soft); }
+  .boaz-carimbo > div:nth-child(-n + 2) { border-top: 0; }
+  .boaz-marca-rodape { padding: 24px 16px; }
+  .sumario ol { columns: 1; }
+  table { display: block; overflow-x: auto; }
+  dl.glossario { grid-template-columns: 1fr; }
+  dl.glossario > dt { border-bottom: 0; padding-bottom: 2px; }
+  .boaz-barra { top: 12px; right: 12px; }
+  .boaz-barra .rotulo { display: none; }
+}
+
+/* ── impressão / PDF: sempre claro, A4 ───────────────────── */
+@page { size: A4; margin: 18mm 15mm 18mm; }
+@media print {
+  :root:root:root {
+    color-scheme: light;
+    --canvas: #ffffff; --page: #ffffff; --band: #f6f8fa; --surface: #f6f8fa; --surface-2: #eef1f4;
+    --border: #d1d9e0; --border-soft: #e4e8ec; --text: #1f2328; --text-strong: #0d1117;
+    --muted: #59636e; --faint: #818b98; --accent: #0969da; --accent-ink: #0550ae; --accent-soft: #ddf4ff;
+    --accent-2: #8250df; --accent-2-soft: #fbefff; --green: #1a7f37; --green-soft: #dafbe1;
+    --orange: #bc4c00; --orange-soft: #fff1e5; --red: #cf222e; --red-soft: #ffebe9;
+    --yellow: #9a6700; --yellow-soft: #fff8c5; --marca-dagua: rgba(9, 105, 218, .06);
+  }
+  html { background: #fff; }
+  body { max-width: none; margin: 0; border-radius: 0; box-shadow: none; overflow: visible; font-size: 10pt; }
+  main { padding: 0 2mm; }
+  .boaz-marca-topo { padding: 9mm 8mm 0; border-radius: 8px 8px 0 0; }
+  .boaz-carimbo { margin: 7mm -8mm 0; }
+  .boaz-carimbo > div:first-child { padding-left: 8mm; }
+  .boaz-carimbo > div:last-child { padding-right: 8mm; }
+  .boaz-marca-rodape { margin-top: 10mm; padding: 7mm 8mm 6mm; border-radius: 0 0 8px 8px; break-inside: avoid; }
+  .boaz-barra, .sumario, details.boaz-snippet { display: none !important; }
+  body[data-marca]::after { font-size: 92px; }
+  h2 { margin-top: 9mm; break-after: avoid; }
+  h3 { break-after: avoid; }
+  tr, pre, .persona, .metrica, ul.pendencias > li { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+  a.ref { color: var(--accent); }
+}
+</style>
+<script id="boaz-tema-js">
+/* boaz · tema dos documentos de requisito · v01 — tema (claro/sistema/escuro), PDF, marca d'água, Gherkin, sumário */
+(function () {
+  var d = document, h = d.documentElement, CHAVE = "boaz-tema";
+  function meta(n) { var m = d.querySelector('meta[name="boaz:' + n + '"]'); return m ? m.content.trim() : ""; }
+  function guardado() { try { return localStorage.getItem(CHAVE) || "system"; } catch (e) { return "system"; } }
+  function aplicar(t) {
+    if (t === "light" || t === "dark") h.setAttribute("data-theme", t); else h.removeAttribute("data-theme");
+    var bs = d.querySelectorAll(".boaz-seg button");
+    for (var i = 0; i < bs.length; i++) bs[i].setAttribute("aria-pressed", String(bs[i].getAttribute("data-tema") === t));
+  }
+  aplicar(guardado());
+
+
+  // Cabeçalho e rodapé de cada página do PDF (margin boxes do @page, Chrome/Edge 131+)
+  var q = function (s) { return JSON.stringify(s); };
+  var caixa = "font-family:Inter,'Segoe UI',Roboto,Arial,sans-serif;font-size:7.5pt;color:#818b98;";
+  var pagina = d.createElement("style");
+  pagina.textContent = "@page{" +
+    "@top-left{" + caixa + "content:" + q(meta("projeto") + " · " + meta("documento")) + "}" +
+    "@top-right{" + caixa + "content:" + q(meta("versao") + " · " + meta("data") + " · " + meta("status")) + "}" +
+    "@bottom-left{" + caixa + "font-family:'JetBrains Mono',Menlo,monospace;content:" + q(meta("caminho")) + "}" +
+    "@bottom-right{" + caixa + "content:\"Página \" counter(page) \" de \" counter(pages)}}" +
+    "@page:first{@top-left{content:none}@top-right{content:none}}";
+  d.head.appendChild(pagina);
+
+  // Nome sugerido do PDF: <documento>_v<NN>_<AAAAMMDD-HHMM>
+  function nomePdf() {
+    return meta("documento") + "_" + meta("versao") + "_" + meta("data").replace(/[^0-9 ]/g, "").replace(" ", "-");
+  }
+  var tituloOriginal = d.title, temaAntes = null;
+  function antes() {
+    tituloOriginal = d.title; d.title = nomePdf();
+    temaAntes = h.getAttribute("data-theme"); h.setAttribute("data-theme", "light");
+  }
+  function depois() {
+    d.title = tituloOriginal;
+    if (temaAntes) h.setAttribute("data-theme", temaAntes); else h.removeAttribute("data-theme");
+  }
+  window.addEventListener("beforeprint", antes);
+  window.addEventListener("afterprint", depois);
+
+  var ICONES = {
+    light: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/><\/svg>',
+    system: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><\/svg>',
+    dark: '<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/><\/svg>',
+    pdf: '<svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/><\/svg>'
+  };
+  function norm(s) { return (s || "").replace(/[^0-9a-z]/gi, "").toLowerCase(); }
+
+  function montar() {
+    // Marca diagonal: Rascunho, Em revisão e Obsoleto
+    if (/rascunho|revis|obsoleto/i.test(meta("status"))) d.body.setAttribute("data-marca", meta("status"));
+
+    // Barra: tema + PDF
+    var barra = d.createElement("div");
+    barra.className = "boaz-barra";
+    barra.setAttribute("role", "toolbar");
+    barra.setAttribute("aria-label", "Visualização do documento");
+    var temas = [["light", "Claro"], ["system", "Sistema"], ["dark", "Escuro"]], seg = '<div class="boaz-seg" role="group" aria-label="Tema">';
+    for (var i = 0; i < temas.length; i++) {
+      seg += '<button type="button" data-tema="' + temas[i][0] + '" title="Tema ' + temas[i][1].toLowerCase() + '" aria-label="Tema ' + temas[i][1].toLowerCase() + '">' + ICONES[temas[i][0]] + "<\/button>";
+    }
+    barra.innerHTML = seg + '<\/div><button type="button" class="boaz-pdf" title="Gerar PDF (' + nomePdf() + '.pdf)">' + ICONES.pdf + '<span class="rotulo">PDF ' + meta("versao") + "<\/span><\/button>";
+    d.body.appendChild(barra);
+    barra.addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      if (b.classList.contains("boaz-pdf")) { window.print(); return; }
+      var t = b.getAttribute("data-tema");
+      try { localStorage.setItem(CHAVE, t); } catch (x) {}
+      aplicar(t);
+    });
+    aplicar(guardado());
+
+    // Gherkin: destaca palavras-chave e textos entre aspas
+    var gs = d.querySelectorAll("pre.gherkin");
+    for (var g = 0; g < gs.length; g++) {
+      if (gs[g].getAttribute("data-pronto")) continue;
+      // aspas antes das palavras-chave: os class="…" inseridos depois não podem ser pegos
+      gs[g].innerHTML = gs[g].innerHTML
+        .replace(/"([^"<\n]*)"/g, '<span class="g-texto">"$1"<\/span>')
+        .replace(/^(\s*)(Funcionalidade|Contexto|Cenário|Esquema do Cenário|Exemplos):/gm, '$1<span class="g-cenario">$2:<\/span>')
+        .replace(/^(\s*)(Dado|Dada|Dados|Dadas|Quando|Então|E|Mas)(?= )/gm, '$1<span class="g-passo">$2<\/span>');
+      gs[g].setAttribute("data-pronto", "1");
+    }
+
+    // Sumário automático: <nav class="sumario"><\/nav> recebe os <h2> de <main>
+    var nav = d.querySelector("nav.sumario");
+    if (nav && !nav.querySelector("ol")) {
+      var hs = d.querySelectorAll("main > section > h2"), ol = d.createElement("ol");
+      for (var k = 0; k < hs.length; k++) {
+        var sec = hs[k].closest("section"), id = (sec && sec.id) || hs[k].id;
+        if (!id) continue;
+        var li = d.createElement("li"), a = d.createElement("a");
+        a.href = "#" + id; a.textContent = hs[k].textContent; li.appendChild(a); ol.appendChild(li);
+      }
+      nav.innerHTML = '<p class="boaz-eyebrow">Sumário<\/p>'; nav.appendChild(ol);
+    }
+
+    // Conferência da marca d'água: versão e data iguais em <meta>, carimbo, histórico e rodapé
+    var v = meta("versao"), dt = meta("data"), erros = [];
+    var cv = d.querySelector(".boaz-carimbo .boaz-versao"), cd = d.querySelector(".boaz-carimbo .boaz-data");
+    var h1 = d.querySelector(".boaz-historico tbody tr"), lr = d.querySelector(".boaz-rodape-linha");
+    if (!cv || norm(cv.textContent) !== norm(v)) erros.push("versão do carimbo");
+    if (!cd || norm(cd.textContent) !== norm(dt)) erros.push("data do carimbo");
+    if (!h1 || norm(h1.cells[0].textContent) !== norm(v) || norm(h1.cells[1].textContent) !== norm(dt)) erros.push("1ª linha do histórico");
+    if (!lr || norm(lr.textContent).indexOf(norm(v) + norm(dt)) < 0) erros.push("linha do rodapé");
+    if (erros.length) {
+      barra.setAttribute("data-alerta", "");
+      barra.querySelector(".boaz-pdf").title = "Marca d'água diferente de <meta boaz:versao/data>: " + erros.join(", ");
+      if (window.console) console.warn("boaz: marca d'água inconsistente →", erros.join(", "));
+    }
+  }
+  if (d.readyState === "loading") d.addEventListener("DOMContentLoaded", montar); else montar();
+})();
+</script>
+<!-- boaz:casca:fim -->
+<style>
+/* só do tema.html: exemplos do catálogo */
+.boaz-exemplo { margin: 0 0 10px; padding: 22px 22px 6px; border: 1px dashed var(--border); border-radius: 12px; }
+details.boaz-snippet { margin: 0 0 28px; }
+details.boaz-snippet > summary { width: max-content; color: var(--muted); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+details.boaz-snippet > summary:hover { color: var(--accent); }
+details.boaz-snippet > pre { margin-top: 10px; font-size: 12px; }
+.paleta { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 0 0 20px; }
+.paleta > div { padding: 10px 12px; border: 1px solid var(--border-soft); border-radius: 10px; font-size: 12.5px; }
+.paleta > div::before { content: ""; display: block; height: 28px; margin-bottom: 8px; border-radius: 6px; background: var(--c); border: 1px solid var(--border-soft); }
+.paleta code { font-size: 11px; }
+.amostra { margin: 0 0 20px; padding: 22px 24px; border: 1px solid var(--border-soft); border-radius: 12px; }
+.amostra > * { margin: 0 0 8px; }
+.amostra > :last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<header class="boaz-marca-topo">
+  <p class="boaz-eyebrow">boaz · Tema</p>
+  <h1>Tema dos documentos de requisito</h1>
+  <p class="boaz-objetivo"><span>Objetivo</span>padronizar marca d'água, tipografia, formato e estilo de todo documento <code>.html</code> de <code>1_Requisitos/</code> e mostrar, renderizado, cada componente que um documento pode usar.</p>
+  <dl class="boaz-carimbo">
+    <div><dt>Documento</dt><dd>tema</dd></div>
+    <div><dt>Versão</dt><dd><span class="boaz-versao">v01</span></dd></div>
+    <div><dt>Data</dt><dd class="boaz-data">2026-10-11 · 15:00</dd></div>
+    <div><dt>Status</dt><dd><span class="status status-aprovado">Aprovado</span></dd></div>
+  </dl>
+</header>
+
+<main>
+  <nav class="sumario"></nav>
+
+  <section id="como-usar">
+    <h2>Como usar</h2>
+    <p>As skills <code>/requisito</code> (conteúdo) e <code>/requisito-estilo</code> (visual, migração e PDF) seguem este arquivo. Ele é, ao mesmo tempo, a <strong>regra</strong> e o <strong>catálogo</strong>: abra-o no navegador para ver cada componente, ou leia o código-fonte para copiá-lo. Edite-o para mudar o padrão do projeto; os documentos existentes mudam só na próxima versão de cada um.</p>
+    <table>
+      <thead><tr><th>Seção</th><th>O que define</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#marca-dagua">Marca d'água</a></td><td>metadados, cabeçalho e rodapé obrigatórios</td></tr>
+        <tr><td><a href="#casca">Casca</a></td><td>o bloco de estilo e script que todo documento embute; temas e PDF</td></tr>
+        <tr><td><a href="#visual">Visual</a></td><td>cores e tipografia</td></tr>
+        <tr><td><a href="#formato">Formato</a></td><td>nome do arquivo, esqueleto e tamanho</td></tr>
+        <tr><td><a href="#escrita">Escrita</a></td><td>como redigir um requisito claro</td></tr>
+        <tr><td><a href="#catalogo">Catálogo de componentes</a></td><td>cada componente disponível, renderizado, com o HTML</td></tr>
+        <tr><td><a href="#tipos">Tipos de documento</a></td><td>quais seções cada tipo usa</td></tr>
+        <tr><td><a href="#versionamento">Versionamento e PDF</a></td><td>versão, data, histórico, IDs e exportação</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="marca-dagua">
+    <h2>Marca d'água</h2>
+    <p>Todo documento é identificado em quatro lugares, que precisam dizer <strong>a mesma versão e a mesma data</strong>: os <code>&lt;meta boaz:*&gt;</code> do <code>&lt;head&gt;</code>, o <strong>carimbo</strong> do topo, a primeira linha do <strong>histórico</strong> e a <strong>linha do rodapé</strong>. Se divergirem, o botão de PDF fica vermelho e explica o motivo.</p>
+
+    <h3>Metadados, no <code>&lt;head&gt;</code></h3>
+<pre><code>&lt;title&gt;Cadastro de usuário · Loja X · v03&lt;/title&gt;
+&lt;!-- boaz:marca --&gt;
+&lt;meta name="boaz:projeto" content="Loja X"&gt;
+&lt;meta name="boaz:documento" content="02_cadastro-usuario"&gt;
+&lt;meta name="boaz:caminho" content="1_Requisitos/02_cadastro-usuario.html"&gt;
+&lt;meta name="boaz:tipo" content="Funcionalidade"&gt;
+&lt;meta name="boaz:versao" content="v03"&gt;
+&lt;meta name="boaz:data" content="2026-10-11 14:30"&gt;
+&lt;meta name="boaz:status" content="Em revisão"&gt;</code></pre>
+    <table>
+      <thead><tr><th>Campo</th><th>Conteúdo</th></tr></thead>
+      <tbody>
+        <tr><td><code>projeto</code></td><td><code>PROJECT_NAME</code> de <code>.boaz</code></td></tr>
+        <tr><td><code>documento</code></td><td>nome do arquivo sem <code>.html</code></td></tr>
+        <tr><td><code>caminho</code></td><td>caminho a partir da raiz do projeto</td></tr>
+        <tr><td><code>tipo</code></td><td><code>Visão do produto</code>, <code>Funcionalidade</code>, <code>Transversal</code> ou <code>Glossário</code></td></tr>
+        <tr><td><code>versao</code></td><td><code>vNN</code>, começa em <code>v01</code></td></tr>
+        <tr><td><code>data</code></td><td><code>AAAA-MM-DD HH:MM</code>, hora local em que a versão foi gerada</td></tr>
+        <tr><td><code>status</code></td><td><span class="status status-rascunho">Rascunho</span> → <span class="status status-em-revisao">Em revisão</span> → <span class="status status-aprovado">Aprovado</span>; <span class="status status-obsoleto">Obsoleto</span> quando substituído</td></tr>
+      </tbody>
+    </table>
+    <p>Um <code>&lt;meta&gt;</code> por linha, nesta ordem: o <code>./boaz.sh requisitos</code> e o <code>./boaz.sh pdf</code> os leem. O <code>&lt;title&gt;</code> repete título, projeto e versão.</p>
+
+    <h3>Topo: faixa com carimbo</h3>
+    <p>Primeiro elemento do <code>&lt;body&gt;</code>, como a marca de topo dos diagramas: sobretítulo <code>PROJETO · TIPO</code>, título, objetivo em uma frase e o carimbo com documento, versão, data e status. A linha em gradiente fecha a faixa.</p>
+<pre><code>&lt;header class="boaz-marca-topo"&gt;
+  &lt;p class="boaz-eyebrow"&gt;Loja X · Funcionalidade&lt;/p&gt;
+  &lt;h1&gt;Cadastro de usuário&lt;/h1&gt;
+  &lt;p class="boaz-objetivo"&gt;&lt;span&gt;Objetivo&lt;/span&gt;definir como uma pessoa cria a conta e prova que o e-mail é dela.&lt;/p&gt;
+  &lt;dl class="boaz-carimbo"&gt;
+    &lt;div&gt;&lt;dt&gt;Documento&lt;/dt&gt;&lt;dd&gt;02_cadastro-usuario&lt;/dd&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;dt&gt;Versão&lt;/dt&gt;&lt;dd&gt;&lt;span class="boaz-versao"&gt;v03&lt;/span&gt;&lt;/dd&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;dt&gt;Data&lt;/dt&gt;&lt;dd class="boaz-data"&gt;2026-10-11 · 14:30&lt;/dd&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;&lt;span class="status status-em-revisao"&gt;Em revisão&lt;/span&gt;&lt;/dd&gt;&lt;/div&gt;
+  &lt;/dl&gt;
+&lt;/header&gt;</code></pre>
+
+    <h3>Rodapé: histórico e identificação</h3>
+    <p>Último elemento do <code>&lt;body&gt;</code>. Histórico com a versão mais nova no topo e no máximo 10 linhas (o restante fica no git); a linha final repete projeto, versão, data e caminho e identifica a última página quando o documento é impresso.</p>
+<pre><code>&lt;footer class="boaz-marca-rodape"&gt;
+  &lt;p class="boaz-eyebrow"&gt;Histórico&lt;/p&gt;
+  &lt;table class="boaz-historico"&gt;
+    &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Versão&lt;/th&gt;&lt;th&gt;Data&lt;/th&gt;&lt;th&gt;Mudança&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;&lt;td&gt;&lt;span class="boaz-versao"&gt;v03&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2026-10-11 14:30&lt;/td&gt;&lt;td&gt;&lt;code class="id"&gt;RF-04&lt;/code&gt; incluído: limite de tentativas&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;v02&lt;/td&gt;&lt;td&gt;2026-10-10 17:05&lt;/td&gt;&lt;td&gt;Status → Em revisão&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;v01&lt;/td&gt;&lt;td&gt;2026-10-10 09:00&lt;/td&gt;&lt;td&gt;Criação&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+  &lt;div class="boaz-rodape-linha"&gt;
+    &lt;span&gt;Loja X · v03 · 2026-10-11 14:30&lt;/span&gt;
+    &lt;span class="boaz-arquivo"&gt;1_Requisitos/02_cadastro-usuario.html&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;</code></pre>
+
+    <h3>Marca diagonal e páginas do PDF</h3>
+    <ul>
+      <li>Status <span class="status status-rascunho">Rascunho</span>, <span class="status status-em-revisao">Em revisão</span> ou <span class="status status-obsoleto">Obsoleto</span>: o script estampa o status em diagonal, bem leve, atrás do texto — na tela e em <strong>cada página</strong> do PDF. <span class="status status-aprovado">Aprovado</span> sai limpo</li>
+      <li>No PDF, da segunda página em diante, o cabeçalho traz <code>projeto · documento</code> e <code>versão · data · status</code>; o rodapé de toda página traz o caminho e <q class="ui">Página 2 de 4</q></li>
+    </ul>
+  </section>
+
+  <section id="casca">
+    <h2>Casca</h2>
+    <p>O documento é <strong>autocontido</strong>, como os diagramas: o estilo e o script viajam dentro dele, então o arquivo abre igual em qualquer lugar e o PDF de uma versão nunca muda por causa de outra. A casca é tudo o que está entre <code>&lt;!-- boaz:casca:inicio --&gt;</code> e <code>&lt;!-- boaz:casca:fim --&gt;</code> no <code>&lt;head&gt;</code> deste arquivo: fontes, <code>&lt;style id="boaz-tema"&gt;</code> e <code>&lt;script id="boaz-tema-js"&gt;</code>. Copie-a <strong>sem alterar</strong>.</p>
+    <p>Extraia com: <code>awk '/&lt;!-- boaz:casca:inicio/,/&lt;!-- boaz:casca:fim/' 0_Assets/requisitos/tema.html</code></p>
+    <p>O que a casca entrega, sem nada no <code>&lt;body&gt;</code>:</p>
+    <ul>
+      <li><strong>Temas</strong>: botões <em>Claro</em>, <em>Sistema</em> (segue o sistema operacional, padrão) e <em>Escuro</em>, no canto superior direito; a escolha fica salva no navegador. O escuro é a paleta do <code>tema.svg</code></li>
+      <li><strong>PDF</strong>: o botão abre a impressão já em tema claro, A4, com o nome sugerido <code>&lt;documento&gt;_v&lt;NN&gt;_&lt;AAAAMMDD-HHMM&gt;.pdf</code>; escolha <em>Salvar como PDF</em>. Para gerar o arquivo sem abrir o navegador: <code>./boaz.sh pdf &lt;documento&gt;</code></li>
+      <li><strong>Conferência</strong> da marca d'água, <strong>marca diagonal</strong> por status, <strong>sumário</strong> automático e <strong>destaque de Gherkin</strong></li>
+    </ul>
+    <p>Sem rede, as fontes caem para as do sistema e nada quebra. Estilo próprio de um documento é proibido: o que faltar vira componente novo neste tema (skill <code>/requisito-estilo</code>).</p>
+  </section>
+
+  <section id="visual">
+    <h2>Visual</h2>
+    <p>Mesma paleta dos diagramas. Cor tem papel fixo; nunca escreva cor, <code>style=""</code> ou fonte no documento — use as classes do catálogo.</p>
+    <div class="paleta">
+      <div style="--c: var(--accent)"><b>Acento</b><br><code>--accent</code> links, IDs, <span class="prio prio-deve">Deve</span></div>
+      <div style="--c: var(--accent-2)"><b>Acento 2</b><br><code>--accent-2</code> histórias, Importante</div>
+      <div style="--c: var(--green)"><b>Verde</b><br><code>--green</code> Aprovado, escopo</div>
+      <div style="--c: var(--yellow)"><b>Amarelo</b><br><code>--yellow</code> Rascunho, Em aberto</div>
+      <div style="--c: var(--orange)"><b>Laranja</b><br><code>--orange</code> Aviso</div>
+      <div style="--c: var(--red)"><b>Vermelho</b><br><code>--red</code> Obsoleto, erro</div>
+    </div>
+    <p><strong>Tipografia</strong>: Inter para o texto (títulos com peso 700–760 e espaçamento negativo), JetBrains Mono para código, IDs, datas e versões. Corpo com 15,5 px e entrelinha 1,68; números tabulares nas tabelas.</p>
+    <div class="amostra">
+      <p class="boaz-eyebrow">Sobretítulo · eyebrow</p>
+      <h2 style="margin-top: 0">Seção de documento</h2>
+      <h3><code class="id">RF-02</code> Subseção de critério</h3>
+      <p>Texto corrido com <strong>termo do glossário</strong>, palavra estrangeira em <em>checkout</em>, valor literal <code>ana@exemplo.com</code>, identificador <code class="id">RN-01</code> e mensagem exibida <q class="ui">Código expirado</q>.</p>
+    </div>
+  </section>
+
+  <section id="formato">
+    <h2>Formato</h2>
+    <p><strong>Arquivo:</strong> <code>1_Requisitos/&lt;NN&gt;_&lt;nome&gt;.html</code></p>
+    <ul>
+      <li><code>NN</code>: dois dígitos, ordem de leitura (<code>00</code> visão, <code>01</code>–<code>89</code> funcionalidades, <code>90</code>–<code>98</code> transversais, <code>99</code> glossário)</li>
+      <li><code>nome</code>: kebab-case, sem acentos; não muda entre versões (links e âncoras continuam válidos)</li>
+    </ul>
+    <p><strong>Esqueleto</strong> (funcionalidade; os outros tipos estão em <a href="#tipos">Tipos de documento</a>):</p>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+&lt;title&gt;Título · Projeto · vNN&lt;/title&gt;
+&lt;!-- boaz:marca --&gt;
+&lt;meta name="boaz:…"&gt;              ← 7 metadados
+&lt;!-- boaz:casca:inicio --&gt;
+…                                  ← copiado do tema, sem alterar
+&lt;!-- boaz:casca:fim --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;header class="boaz-marca-topo"&gt;…&lt;/header&gt;
+&lt;main&gt;
+  &lt;section id="contexto"&gt;&lt;h2&gt;Contexto&lt;/h2&gt;…&lt;/section&gt;
+  &lt;section id="requisitos-funcionais"&gt;&lt;h2&gt;Requisitos funcionais&lt;/h2&gt;…&lt;/section&gt;
+  &lt;section id="regras-de-negocio"&gt;&lt;h2&gt;Regras de negócio&lt;/h2&gt;…&lt;/section&gt;
+  &lt;section id="requisitos-nao-funcionais"&gt;&lt;h2&gt;Requisitos não funcionais&lt;/h2&gt;…&lt;/section&gt;
+  &lt;section id="criterios-de-aceite"&gt;&lt;h2&gt;Critérios de aceite&lt;/h2&gt;…&lt;/section&gt;
+  &lt;section id="fora-de-escopo"&gt;&lt;h2&gt;Fora de escopo&lt;/h2&gt;…&lt;/section&gt;
+  &lt;section id="em-aberto"&gt;&lt;h2&gt;Em aberto&lt;/h2&gt;…&lt;/section&gt;
+  &lt;section id="diagramas"&gt;&lt;h2&gt;Diagramas&lt;/h2&gt;…&lt;/section&gt;
+&lt;/main&gt;
+&lt;footer class="boaz-marca-rodape"&gt;…&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    <ul>
+      <li>Seções sempre nesta ordem, cada uma num <code>&lt;section id="…"&gt;</code> com o nome em kebab-case; seção opcional sem conteúdo é <strong>removida</strong> (nunca fica vazia nem com "N/A")</li>
+      <li>Sem numeração nas seções: o nome já é a referência</li>
+      <li><code>&lt;nav class="sumario"&gt;&lt;/nav&gt;</code> no início do <code>&lt;main&gt;</code> só em documentos com 6 seções ou mais</li>
+      <li>HTML indentado com 2 espaços, um bloco por linha: o diff do git precisa continuar legível</li>
+    </ul>
+    <p><strong>Tamanho</strong></p>
+    <table>
+      <thead><tr><th>Limite</th><th>Valor</th><th>Passou?</th></tr></thead>
+      <tbody>
+        <tr><td>Documento impresso</td><td>≤ 4 páginas A4</td><td>divida em dois documentos</td></tr>
+        <tr><td>Contexto / Problema</td><td>≤ 2 parágrafos curtos</td><td>o detalhe vai para os requisitos</td></tr>
+        <tr><td>Requisitos funcionais</td><td>≤ 12 por documento</td><td>divida a funcionalidade</td></tr>
+        <tr><td>Cenários por requisito</td><td>≤ 2</td><td>o resto é regra de negócio</td></tr>
+        <tr><td>Assunto</td><td>1 funcionalidade por documento</td><td>crie outro documento</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="escrita">
+    <h2>Escrita</h2>
+    <table>
+      <thead><tr><th>Bloco</th><th>Forma</th><th>Exemplo</th></tr></thead>
+      <tbody>
+        <tr><td>Requisito funcional</td><td><code>O sistema deve &lt;verbo&gt; &lt;objeto&gt; [quando &lt;condição&gt;].</code></td><td>O sistema deve bloquear o login após 5 tentativas erradas seguidas.</td></tr>
+        <tr><td>Regra de negócio</td><td>política do negócio, vale mesmo sem sistema</td><td>Um pedido só pode ser cancelado antes do envio.</td></tr>
+        <tr><td>Requisito não funcional</td><td>métrica + limite + condição</td><td>95 % das buscas respondem em ≤ 2 s com 1.000 usuários simultâneos.</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>Uma obrigação por frase: "e" unindo duas ações são dois requisitos</li>
+      <li>Sempre "deve"; a força vem da prioridade, nunca de "pode" ou "deveria" no texto</li>
+      <li>Diga <strong>o quê</strong>, não <strong>como</strong>: nada de backend, frontend, banco, API, framework, provedor ou tela específica</li>
+      <li>Voz ativa, tempo presente, um nome por coisa (o do glossário)</li>
+      <li>Datas <code>AAAA-MM-DD</code>, horas <code>HH:MM</code> (24 h); número e unidade com espaço (<code>2 s</code>, <code>10 MB</code>, <code>R$ 1.500,00</code>), decimal com vírgula; limites com símbolo (<code>≤ 2 s</code>, <code>≥ 99,5 %</code>)</li>
+      <li>Sem emojis; imagens só como diagrama</li>
+      <li>Dúvida não vira requisito: vai para Em aberto</li>
+    </ul>
+    <p>Palavras vagas são proibidas; troque por um critério verificável:</p>
+    <table>
+      <thead><tr><th>Evite</th><th>Troque por</th></tr></thead>
+      <tbody>
+        <tr><td>rápido, eficiente, performático</td><td>tempo com limite: <code>≤ 2 s</code></td></tr>
+        <tr><td>fácil, intuitivo, amigável, simples</td><td>tarefa + medida: concluir o cadastro em ≤ 3 passos</td></tr>
+        <tr><td>seguro, robusto, confiável</td><td>ameaça + controle, ou disponibilidade: <code>≥ 99,5 %</code> ao mês</td></tr>
+        <tr><td>adequado, flexível, moderno</td><td>o critério que torna "adequado" verdadeiro</td></tr>
+        <tr><td>etc., entre outros, e/ou</td><td>a lista completa, ou "e" / "ou"</td></tr>
+        <tr><td>geralmente, normalmente, se possível</td><td>a condição exata, ou mova para Em aberto</td></tr>
+        <tr><td>TBD, a definir</td><td>uma pendência em Em aberto</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="catalogo">
+    <h2>Catálogo de componentes</h2>
+    <p>Cada componente aparece renderizado; abra <em>Ver HTML</em> para copiar. Na tabela, a classe é o que importa — o resto é HTML comum.</p>
+    <table>
+      <thead><tr><th>Elemento</th><th>HTML</th><th>Regra</th></tr></thead>
+      <tbody>
+        <tr><td>Título</td><td><code>&lt;h1&gt;</code></td><td>só na marca de topo; primeira letra maiúscula (e nomes próprios), sem ID nem ponto final</td></tr>
+        <tr><td>Objetivo</td><td><code>.boaz-objetivo</code></td><td>uma frase, na marca de topo</td></tr>
+        <tr><td>Seção</td><td><code>&lt;section id&gt;&lt;h2&gt;</code></td><td>só os nomes do esqueleto do tipo, na ordem dele</td></tr>
+        <tr><td>Subseção</td><td><code>&lt;h3&gt;</code></td><td>em Critérios de aceite (uma por requisito) e nos cartões; nunca <code>&lt;h4&gt;</code></td></tr>
+        <tr><td>Identificador</td><td><code>&lt;code class="id"&gt;</code></td><td>IDs (<code class="id">RF-01</code>); valores literais, campos e arquivos em <code>&lt;code&gt;</code></td></tr>
+        <tr><td>Termo definido</td><td><code>&lt;strong&gt;</code></td><td>primeira ocorrência de um termo do glossário; no máximo um por frase</td></tr>
+        <tr><td>Texto exibido</td><td><code>&lt;q class="ui"&gt;</code></td><td>mensagem ou rótulo, exatamente como aparece</td></tr>
+        <tr><td>Estrangeirismo</td><td><code>&lt;em&gt;</code></td><td>não use itálico para mais nada</td></tr>
+        <tr><td>Lista</td><td><code>&lt;ul&gt;</code></td><td><code>&lt;ol&gt;</code> só quando a ordem importa; itens e células sem ponto final</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Requisitos funcionais</h3>
+    <p>Cada linha tem <code>id</code> igual ao ID: outro documento aponta para <code>02_cadastro-usuario.html#RF-02</code> e a linha acende.</p>
+    <div class="boaz-exemplo">
+      <table>
+        <thead><tr><th>ID</th><th>Requisito</th><th>Prioridade</th></tr></thead>
+        <tbody>
+          <tr id="RF-01"><td><code class="id">RF-01</code></td><td>O sistema deve criar a conta com nome, e-mail e senha</td><td><span class="prio prio-deve">Deve</span></td></tr>
+          <tr id="RF-02"><td><code class="id">RF-02</code></td><td>O sistema deve enviar um código de confirmação ao e-mail informado</td><td><span class="prio prio-deve">Deve</span></td></tr>
+          <tr id="RF-03"><td><code class="id">RF-03</code></td><td>O sistema deve lembrar o e-mail do último acesso no mesmo aparelho</td><td><span class="prio prio-deveria">Deveria</span></td></tr>
+          <tr id="RF-04"><td><code class="id">RF-04</code></td><td>O sistema deve permitir entrar com uma conta Google</td><td><span class="prio prio-poderia">Poderia</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Prioridade (MoSCoW)</h3>
+    <div class="boaz-exemplo">
+      <table>
+        <thead><tr><th>Valor</th><th>Significado</th></tr></thead>
+        <tbody>
+          <tr><td><span class="prio prio-deve">Deve</span></td><td>sem ele a entrega não vale; exige critério de aceite</td></tr>
+          <tr><td><span class="prio prio-deveria">Deveria</span></td><td>importante, mas a entrega sai sem ele</td></tr>
+          <tr><td><span class="prio prio-poderia">Poderia</span></td><td>desejável, entra se sobrar tempo</td></tr>
+          <tr><td><span class="prio prio-nao-agora">Não agora</span></td><td>combinado que fica para depois; prefira Fora de escopo</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Regras de negócio</h3>
+    <div class="boaz-exemplo">
+      <table>
+        <thead><tr><th>ID</th><th>Regra</th></tr></thead>
+        <tbody>
+          <tr id="RN-01"><td><code class="id">RN-01</code></td><td>Um e-mail pertence a uma única conta</td></tr>
+          <tr id="RN-02"><td><code class="id">RN-02</code></td><td>O código de confirmação vale por 15 min</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Requisitos não funcionais</h3>
+    <div class="boaz-exemplo">
+      <table>
+        <thead><tr><th>ID</th><th>Categoria</th><th>Requisito</th></tr></thead>
+        <tbody>
+          <tr id="RNF-01"><td><code class="id">RNF-01</code></td><td><span class="tag">Desempenho</span></td><td>A confirmação do código responde em ≤ 1 s para 95 % das tentativas</td></tr>
+          <tr id="RNF-02"><td><code class="id">RNF-02</code></td><td><span class="tag">Privacidade</span></td><td>A senha nunca é exibida nem enviada por e-mail</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Categorias: Desempenho, Disponibilidade, Segurança, Privacidade, Acessibilidade, Usabilidade, Compatibilidade, Conformidade.</p>
+
+    <h3>Critérios de aceite</h3>
+    <p>Um <code>&lt;article class="criterio"&gt;</code> por requisito <span class="prio prio-deve">Deve</span>, com no máximo 2 cenários em Gherkin. Escreva o texto puro: o script colore as palavras-chave.</p>
+    <div class="boaz-exemplo">
+      <article class="criterio" id="ca-RF-02">
+        <h3><code class="id">RF-02</code> Código de confirmação</h3>
+        <pre class="gherkin">Cenário: código correto
+  Dado uma conta criada com "ana@exemplo.com"
+  Quando a pessoa informa o código recebido em até 15 min
+  Então a conta fica confirmada
+
+Cenário: código expirado
+  Dado um código enviado há mais de 15 min
+  Quando a pessoa o informa
+  Então o sistema exibe "Código expirado"
+  E oferece reenviar o código</pre>
+      </article>
+    </div>
+
+    <h3>Contexto e história de usuário</h3>
+    <div class="boaz-exemplo">
+      <p>Hoje a compra exige preencher os dados a cada pedido. Clientes recorrentes abandonam o carrinho.</p>
+      <p class="historia"><span>Como</span> <strong>cliente</strong>, <span>quero</span> ter uma conta, <span>para</span> comprar sem redigitar meus dados</p>
+    </div>
+
+    <h3>Personas</h3>
+    <p>Visão do produto. <code>data-inicial</code> é a letra do avatar.</p>
+    <div class="boaz-exemplo">
+      <div class="personas">
+        <article class="persona" data-inicial="C">
+          <h3>Cliente</h3>
+          <p><span>Quem é</span>compra pela loja, pelo celular</p>
+          <p><span>Precisa de</span>finalizar a compra em poucos passos</p>
+        </article>
+        <article class="persona" data-inicial="A">
+          <h3>Atendente</h3>
+          <p><span>Quem é</span>responde dúvidas de pedidos</p>
+          <p><span>Precisa de</span>ver o histórico do cliente</p>
+        </article>
+      </div>
+    </div>
+
+    <h3>Objetivos e métricas</h3>
+    <p>Visão do produto: um cartão por objetivo, com a meta em destaque.</p>
+    <div class="boaz-exemplo">
+      <div class="metricas">
+        <article class="metrica">
+          <h3>Reduzir abandono</h3>
+          <p>carrinhos abandonados / iniciados</p>
+          <p class="meta">≤ 40 %</p>
+          <p>em 6 meses</p>
+        </article>
+        <article class="metrica">
+          <h3>Acelerar a recompra</h3>
+          <p>tempo do carrinho ao pagamento</p>
+          <p class="meta">≤ 90 s</p>
+          <p>para clientes com conta</p>
+        </article>
+      </div>
+    </div>
+
+    <h3>Escopo e fora de escopo</h3>
+    <div class="boaz-exemplo">
+      <ul class="escopo">
+        <li>Conta de cliente com confirmação de e-mail</li>
+        <li>Carrinho salvo entre acessos</li>
+      </ul>
+      <ul class="fora">
+        <li>Login por telefone (avaliar após a v1)</li>
+        <li>Exclusão de conta pelo próprio cliente</li>
+      </ul>
+    </div>
+
+    <h3>Em aberto</h3>
+    <p>Pergunta à esquerda, quem responde à direita. Respondida, vira requisito ou regra e sai da lista (o histórico registra).</p>
+    <div class="boaz-exemplo">
+      <ul class="pendencias">
+        <li>Clientes de outros países precisam de cadastro? <span class="tag dono">Produto</span></li>
+        <li>Quantos reenvios de código por hora? <span class="tag dono">Segurança</span></li>
+      </ul>
+    </div>
+
+    <h3>Destaques</h3>
+    <p>No máximo 2 por documento.</p>
+    <div class="boaz-exemplo">
+      <aside class="destaque nota"><p>Contexto que ajuda a entender, mas não é requisito.</p></aside>
+      <aside class="destaque importante"><p>Decisão tomada que restringe o produto, com quem decidiu.</p></aside>
+      <aside class="destaque aviso"><p>Risco conhecido ou dependência externa.</p></aside>
+    </div>
+
+    <h3>Diagramas</h3>
+    <p>Referencie o <code>.svg</code> de <code>2_Diagramas/</code> ou <code>3_Arquitetura/</code> <strong>com a versão explícita</strong>, por caminho relativo; o clique abre o diagrama em tamanho real. A moldura é sempre escura, como os diagramas.</p>
+<pre><code>&lt;figure class="diagrama"&gt;
+  &lt;a href="../2_Diagramas/fluxo-cadastro_v02_20261011-0915.svg"&gt;&lt;img src="../2_Diagramas/fluxo-cadastro_v02_20261011-0915.svg" alt="Fluxo de cadastro: da criação da conta à confirmação do e-mail"&gt;&lt;/a&gt;
+  &lt;figcaption&gt;&lt;strong&gt;Fluxo de cadastro&lt;/strong&gt;&lt;code&gt;2_Diagramas/fluxo-cadastro_v02_20261011-0915.svg&lt;/code&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+    <p><strong>Recorte</strong>: para mostrar só uma faixa de um diagrama alto, some <code>recorte</code> e diga onde a faixa começa (<code>--recorte-y</code>, em % da largura do diagrama) e a proporção dela (<code>--recorte-proporcao</code>, largura / altura). É o único <code>style=""</code> permitido. Abaixo, a seção 4 do <code>tema.svg</code>:</p>
+    <div class="boaz-exemplo">
+      <figure class="diagrama recorte" style="--recorte-y: 74.4%; --recorte-proporcao: 1280 / 620">
+        <a href="../diagramas/tema.svg"><img src="../diagramas/tema.svg" onerror="this.onerror=null;this.src='tema.svg';this.parentNode.href='tema.svg'" alt="Exemplo de arquitetura neutra de provedor, do tema dos diagramas" loading="lazy"></a>
+        <figcaption><strong>Arquitetura neutra (recorte)</strong><code>0_Assets/diagramas/tema.svg</code></figcaption>
+      </figure>
+    </div>
+
+    <h3>Referência a outro documento</h3>
+    <div class="boaz-exemplo">
+      <p>Usa a conta de <a class="ref" href="02_cadastro-usuario.html#RF-01">Cadastro de usuário <code class="id">RF-01</code></a>.</p>
+    </div>
+
+    <h3>Glossário</h3>
+    <p>Termos em ordem alfabética, definição sem ponto final; <code>id</code> do <code>&lt;dt&gt;</code> em kebab-case para receber links (<code>99_glossario.html#pedido</code>).</p>
+    <div class="boaz-exemplo">
+      <dl class="glossario">
+        <dt id="conta-confirmada">Conta confirmada</dt><dd>conta cujo e-mail foi validado pelo código</dd>
+        <dt id="pedido">Pedido</dt><dd>conjunto de itens pagos numa mesma compra</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section id="tipos">
+    <h2>Tipos de documento</h2>
+    <table>
+      <thead><tr><th>Tipo</th><th>Arquivo</th><th>Seções, na ordem (<strong>obrigatórias</strong> em negrito)</th></tr></thead>
+      <tbody>
+        <tr><td>Visão do produto</td><td><code>00_visao-produto.html</code></td><td><strong>Problema</strong>, <strong>Objetivos e métricas</strong>, <strong>Personas</strong>, <strong>Escopo</strong>, Fora de escopo, Em aberto, Diagramas</td></tr>
+        <tr><td>Funcionalidade</td><td><code>01</code>–<code>89</code></td><td><strong>Contexto</strong>, <strong>Requisitos funcionais</strong>, Regras de negócio, Requisitos não funcionais, <strong>Critérios de aceite</strong>, Fora de escopo, Em aberto, Diagramas</td></tr>
+        <tr><td>Transversal</td><td><code>90</code>–<code>98</code></td><td><strong>Contexto</strong>, Regras de negócio, <strong>Requisitos não funcionais</strong>, Em aberto, Diagramas</td></tr>
+        <tr><td>Glossário</td><td><code>99_glossario.html</code></td><td><strong>Termos</strong></td></tr>
+      </tbody>
+    </table>
+    <p>Todos começam com a marca de topo e terminam com a de rodapé. Escopo, na visão, é uma lista curta das capacidades do produto, não dos arquivos (<code>./boaz.sh requisitos</code> lista os arquivos).</p>
+  </section>
+
+  <section id="versionamento">
+    <h2>Versionamento e PDF</h2>
+    <ul>
+      <li>Um arquivo por documento, editado no lugar; o git guarda o conteúdo antigo (diferente dos diagramas, que geram um arquivo por versão)</li>
+      <li>Toda alteração, inclusive de status, é uma versão nova: <code>vNN</code> + 1 e data/hora atuais nos <code>&lt;meta&gt;</code>, no <code>&lt;title&gt;</code>, no carimbo, numa linha nova no topo do histórico e na linha do rodapé</li>
+      <li>IDs são únicos no projeto inteiro, não por documento: o próximo é o maior existente + 1</li>
+      <li>IDs nunca são reaproveitados nem renumerados; requisito removido sai da tabela e o histórico registra (<code class="id">RF-07</code> removido)</li>
+      <li>Ao trocar a versão de um diagrama referenciado, o documento também ganha versão</li>
+      <li>A casca não muda numa versão comum: o documento adota um tema novo só quando pedirem (skill <code>/requisito-estilo</code>), e isso também é versão</li>
+    </ul>
+    <aside class="destaque importante">
+      <p><strong>PDF versionado</strong>: <code>./boaz.sh pdf 02_cadastro-usuario</code> gera <code>1_Requisitos/pdf/02_cadastro-usuario_v03_20261011-1430.pdf</code> — versão e data vêm dos <code>&lt;meta&gt;</code>, então a mesma versão gera sempre o mesmo nome. Precisa de Chrome, Chromium, Edge ou Brave; sem eles, use o botão <em>PDF</em> no navegador.</p>
+    </aside>
+  </section>
+</main>
+
+<footer class="boaz-marca-rodape">
+  <p class="boaz-eyebrow">Histórico</p>
+  <table class="boaz-historico">
+    <thead><tr><th>Versão</th><th>Data</th><th>Mudança</th></tr></thead>
+    <tbody>
+      <tr><td><span class="boaz-versao">v01</span></td><td>2026-10-11 15:00</td><td>Criação: documentos de requisito em <code>.html</code>, com temas claro, sistema e escuro e exportação para PDF</td></tr>
+    </tbody>
+  </table>
+  <div class="boaz-rodape-linha">
+    <span>boaz · v01 · 2026-10-11 15:00</span>
+    <span class="boaz-arquivo">0_Assets/requisitos/tema.html</span>
+  </div>
+</footer>
+
+<script>
+/* só do tema.html: "Ver HTML" abaixo de cada exemplo do catálogo */
+(function () {
+  var ex = document.querySelectorAll(".boaz-exemplo");
+  for (var i = 0; i < ex.length; i++) {
+    var html = ex[i].innerHTML.replace(/ data-pronto="1"/g, "").replace(/<span class="g-[a-z]+">([^<]*)<\/span>/g, "$1");
+    var linhas = html.replace(/^\n+|\s+$/g, "").split("\n"), m = Infinity;
+    // tira a indentação comum das linhas de tag; texto de <pre> (Gherkin) fica intacto
+    linhas.forEach(function (l) { if (/^\s*</.test(l)) m = Math.min(m, l.match(/^ */)[0].length); });
+    var limpo = linhas.map(function (l) { return /^\s*</.test(l) ? l.slice(m) : l; }).join("\n");
+    var det = document.createElement("details"), pre = document.createElement("pre"), code = document.createElement("code");
+    det.className = "boaz-snippet";
+    det.innerHTML = "<summary>Ver HTML<\/summary>";
+    code.textContent = limpo;
+    pre.appendChild(code); det.appendChild(pre);
+    ex[i].parentNode.insertBefore(det, ex[i].nextSibling);
+  }
+})();
+</script>
+</body>
+</html>

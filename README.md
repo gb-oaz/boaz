@@ -18,7 +18,7 @@
 
 O `boaz` monta a estrutura de pastas de um projeto seguindo uma metodologia simples, **sem escolher tecnologia**: do requisito do produto até o código, cada etapa tem a sua pasta.
 
-Também instala três prompts especializados (skills do Claude Code): um escreve os **documentos de requisito** num padrão único, e dois desenham diagramas que **sempre** entregam um `.svg` versionado — pronto para ser referenciado nos requisitos.
+Também instala quatro prompts especializados (skills do Claude Code): dois cuidam dos **documentos de requisito** — conteúdo e estilização — em `.html` com tema claro, sistema e escuro e exportação para PDF, e dois desenham diagramas que **sempre** entregam um `.svg` versionado — pronto para ser referenciado nos requisitos.
 
 ---
 
@@ -37,6 +37,7 @@ O nome fica salvo em `.boaz`. Rodar `./boaz.sh init` de novo só cria o que esti
 | `./boaz.sh init [nome]` | Monta/completa a estrutura e (re)gera as skills |
 | `./boaz.sh status` | Mostra as pastas e quantos arquivos cada uma tem |
 | `./boaz.sh requisitos` | Lista os documentos de requisito com versão, data e status |
+| `./boaz.sh pdf <documento\|todos>` | Exporta o requisito para `1_Requisitos/pdf/<documento>_v<NN>_<AAAAMMDD-HHMM>.pdf` |
 | `./boaz.sh diagramas` | Lista a versão mais recente de cada diagrama |
 | `./boaz.sh svg <pasta> <legenda>` | Imprime o próximo nome versionado de um diagrama |
 
@@ -48,10 +49,11 @@ O nome fica salvo em `.boaz`. Rodar `./boaz.sh init` de novo só cria o que esti
 projeto/
 ├── 0_Assets/
 │   ├── projeto/         # Marca, logos, imagens, fontes
-│   ├── requisitos/      # tema.md (padrão e catálogo dos documentos de requisito)
+│   ├── requisitos/      # tema.html (padrão, estilo e catálogo dos documentos de requisito)
 │   └── diagramas/       # tema.svg (estilo + catálogo visual), ícones de tecnologias
 │       └── icones/      # ícones oficiais AWS, GCP e Azure (.svg), instalados pelo init
-├── 1_Requisitos/        # O produto desejado (.md) — sem backend, frontend ou tecnologia
+├── 1_Requisitos/        # O produto desejado (.html) — sem backend, frontend ou tecnologia
+│   └── pdf/             # PDFs exportados, um por versão
 ├── 2_Diagramas/         # Diagramas de desenvolvimento, backend e frontend (.svg)
 ├── 3_Arquitetura/       # Alto nível: cloud, tecnologias, integrações (.svg)
 ├── 4_CI_CD/             # Estruturas de entrega
@@ -62,7 +64,8 @@ projeto/
 │       ├── backend/
 │       └── frontend/
 ├── .claude/skills/
-│   ├── requisito/             # prompt especializado → 1_Requisitos
+│   ├── requisito/             # prompt especializado → 1_Requisitos (conteúdo e PDF)
+│   ├── requisito-estilo/      # prompt especializado → tema.html (visual, migração .md, PDF)
 │   ├── diagrama-dev/          # prompt especializado → 2_Diagramas
 │   └── diagrama-arquitetura/  # prompt especializado → 3_Arquitetura
 ├── CLAUDE.md            # Resumo da metodologia para o Claude Code
@@ -78,32 +81,50 @@ No Claude Code, peça o documento pela skill:
 ```
 /requisito funcionalidade de cadastro de usuário com confirmação por e-mail
 /requisito no 02_cadastro-usuario, adicione limite de 5 tentativas de login
-/requisito aprove o 00_visao-produto
+/requisito aprove o 00_visao-produto e gere o pdf
+/requisito-estilo troque o acento azul por verde-petróleo e aplique nos documentos
+/requisito-estilo migre os requisitos .md para .html
 ```
 
-Todos os documentos seguem o padrão de [`assets/tema.md`](assets/tema.md), instalado em `0_Assets/requisitos/tema.md`. Ele é, ao mesmo tempo, a regra e o **catálogo** do que um documento pode usar:
+Cada documento é um `.html` **autocontido** em `1_Requisitos/<NN>_<nome>.html`: abra no navegador e use os botões do canto para alternar entre os temas **claro**, **sistema** e **escuro** (o escuro é a paleta do `tema.svg`) ou gerar o **PDF**.
 
-1. **marca d'água** — cabeçalho com projeto, documento, versão, data/hora e status; rodapé com o histórico de versões;
-2. **tipografia** — o que cada marcação significa (`#` só o título, IDs sempre em código, negrito só para termo do glossário…);
-3. **formato** — nome `<NN>_<nome>.md`, esqueleto fixo de seções e limites de tamanho (≤ 150 linhas, ≤ 12 requisitos por documento);
+Todos seguem [`assets/tema.html`](assets/tema.html), instalado em `0_Assets/requisitos/tema.html`. Ele é, ao mesmo tempo, a regra, o **catálogo renderizado** de componentes (com o HTML de cada um em *Ver HTML*) e a fonte da **casca** — o bloco de fontes, CSS e script que cada documento embute:
+
+1. **marca d'água** — `<meta boaz:*>` (projeto, documento, caminho, tipo, versão, data, status); faixa de topo com sobretítulo, título, objetivo e carimbo (documento, versão, data/hora, status); rodapé com o histórico de versões e a identificação do arquivo; marca diagonal para `Rascunho`, `Em revisão` e `Obsoleto`;
+2. **visual** — tipografia Inter + JetBrains Mono, cores por papel, temas claro/sistema/escuro e impressão A4 sempre clara;
+3. **formato** — nome `<NN>_<nome>.html`, esqueleto fixo de seções e limites de tamanho (≤ 12 requisitos, ≤ 4 páginas A4);
 4. **escrita** — "O sistema deve…", uma obrigação por frase, requisito não funcional sempre mensurável, lista de palavras vagas proibidas;
-5. **catálogo de blocos** — requisitos funcionais e não funcionais, regras de negócio, prioridade MoSCoW, critérios de aceite em Gherkin, personas, métricas, em aberto, glossário, destaques;
+5. **catálogo de componentes** — requisitos funcionais e não funcionais, regras de negócio, prioridade MoSCoW, critérios de aceite em Gherkin (coloridos automaticamente), história de usuário, personas, métricas, escopo, em aberto, destaques, glossário, referências entre documentos (`02_cadastro-usuario.html#RF-01`) e **diagramas** `.svg` de `2_Diagramas/` e `3_Arquitetura/` (inteiros ou recortados);
 6. **tipos de documento** — visão do produto (`00`), funcionalidade (`01`–`89`), transversal (`90`–`98`) e glossário (`99`).
 
-```markdown
-<!-- boaz:marca -->
-| Projeto | Documento | Versão | Data | Status |
-|:---|:---|:---:|:---|:---|
-| Loja X | `02_cadastro-usuario` | **v03** | 2026-10-11 14:30 | Em revisão |
-
-# Cadastro de usuário
-
-> Objetivo: definir como uma pessoa cria a conta e prova que o e-mail é dela.
+```html
+<header class="boaz-marca-topo">
+  <p class="boaz-eyebrow">Loja X · Funcionalidade</p>
+  <h1>Cadastro de usuário</h1>
+  <p class="boaz-objetivo"><span>Objetivo</span>definir como uma pessoa cria a conta e prova que o e-mail é dela.</p>
+  <dl class="boaz-carimbo">
+    <div><dt>Documento</dt><dd>02_cadastro-usuario</dd></div>
+    <div><dt>Versão</dt><dd><span class="boaz-versao">v03</span></dd></div>
+    <div><dt>Data</dt><dd class="boaz-data">2026-10-11 · 14:30</dd></div>
+    <div><dt>Status</dt><dd><span class="status status-em-revisao">Em revisão</span></dd></div>
+  </dl>
+</header>
 ```
 
-Diferente dos diagramas, o documento é **editado no lugar** (os links continuam válidos e o git guarda o conteúdo antigo): cada alteração soma 1 na versão, atualiza data/hora e ganha uma linha no histórico. IDs (`RF-01`, `RNF-01`, `RN-01`) são únicos no projeto e nunca reaproveitados. O que o pedido não define não é inventado — vai para a seção **Em aberto**.
+Diferente dos diagramas, o documento é **editado no lugar** (os links continuam válidos e o git guarda o conteúdo antigo): cada alteração soma 1 na versão, atualiza data/hora e ganha uma linha no histórico. Se versão e data divergirem entre `<meta>`, carimbo, histórico e rodapé, o botão de PDF fica vermelho. IDs (`RF-01`, `RNF-01`, `RN-01`) são únicos no projeto e nunca reaproveitados. O que o pedido não define não é inventado — vai para a seção **Em aberto**.
 
-Edite o tema do projeto para mudar o padrão; cada documento o adota na próxima versão.
+### PDF versionado
+
+```bash
+./boaz.sh pdf 02_cadastro-usuario   # → 1_Requisitos/pdf/02_cadastro-usuario_v03_20261011-1430.pdf
+./boaz.sh pdf todos
+```
+
+Versão e data vêm da marca d'água do documento, então a mesma versão gera sempre o mesmo nome. O PDF sai em A4, tema claro, com a faixa de topo na primeira página, o histórico no fim e, em toda página, cabeçalho (`projeto · documento` / `versão · data · status`) e rodapé (caminho e `Página N de M`). Usa o Chrome, Chromium, Edge ou Brave instalado (ou `BOAZ_CHROME`); sem eles, o botão **PDF** do documento abre a impressão com o nome já versionado.
+
+### Estilo
+
+Para mudar o visual, use `/requisito-estilo`: ele edita o `tema.html` do projeto (tokens nos temas claro, escuro e de impressão; componentes novos entram no catálogo), sobe a versão do tema e, com sua confirmação, aplica a casca nova aos documentos — cada um ganha versão. `./boaz.sh requisitos` aponta documentos num tema anterior e `.md` antigos a migrar. Para receber uma versão nova do tema do boaz, apague `0_Assets/requisitos/tema.html` e rode `./boaz.sh init`.
 
 ---
 
@@ -139,8 +160,11 @@ O histórico de mudanças fica também em `<desc>`.
 
 Nos requisitos, referencie a versão exata:
 
-```markdown
-![Fluxo de cadastro](../2_Diagramas/fluxo-cadastro_v02_20261011-0915.svg)
+```html
+<figure class="diagrama">
+  <a href="../2_Diagramas/fluxo-cadastro_v02_20261011-0915.svg"><img src="../2_Diagramas/fluxo-cadastro_v02_20261011-0915.svg" alt="Fluxo de cadastro"></a>
+  <figcaption><strong>Fluxo de cadastro</strong><code>2_Diagramas/fluxo-cadastro_v02_20261011-0915.svg</code></figcaption>
+</figure>
 ```
 
 Ao gerar uma nova versão, a skill avisa quais documentos de `1_Requisitos/` apontam para a anterior e pergunta se deve atualizá-los.
@@ -179,6 +203,7 @@ As skills conhecem os 14 diagramas da UML 2.5 e escolhem o tipo pela pergunta, q
 - `bash` 3.2+
 - `curl` ou `wget`
 - [Claude Code](https://claude.com/claude-code) para as skills
+- Chrome, Chromium, Edge ou Brave para `./boaz.sh pdf` (opcional)
 
 ---
 
